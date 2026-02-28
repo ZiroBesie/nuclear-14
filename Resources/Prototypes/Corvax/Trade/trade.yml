@@ -607,10 +607,10 @@
   entries:
   - proto: N14ClothingOuterPowerArmorRaider
     price: 5000
-    count: 1
+    count: 2
   - proto: N14ClothingOuterPowerArmorT45
     price: 7000
-    count: 1
+    count: 2
 
 - type: storeCategoryStructured
   id: CaravanBuy2_Armor
