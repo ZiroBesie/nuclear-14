@@ -5,7 +5,7 @@
   description: job-description-followers
   playTimeTracker: Followers
   startingGear: FollowersGear
-  requirements:
+  requirements: # Forge-Change
   - !type:CharacterOverallTimeRequirement
     min: 18000 # 5 hour
   icon: "JobIconPassenger"

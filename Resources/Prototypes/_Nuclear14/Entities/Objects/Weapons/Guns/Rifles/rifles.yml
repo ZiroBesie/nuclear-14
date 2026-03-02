@@ -172,6 +172,7 @@
         whitelist:
           tags:
             - N14Cartridge556Rifle
+            - Magazine556Rifle
   - type: StaticPrice
     price: 100
 
