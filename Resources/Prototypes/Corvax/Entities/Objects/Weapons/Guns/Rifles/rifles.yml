@@ -124,7 +124,7 @@
         whitelist:
           tags:
             - Magazine545Rifle
-            - MagazineDrum545Rifle
+            - MagazineDrum545Rifle # Forge-change
       gun_chamber:
         name: Chamber
         startingItem: N14Cartridge545Rifle
@@ -178,7 +178,7 @@
         whitelist:
           tags:
             - MagazineDrum545Rifle
-            - Magazine545Rifle
+            - Magazine545Rifle # Forge-change
       gun_chamber:
         name: Chamber
         startingItem: N14Cartridge545Rifle
