@@ -13,6 +13,8 @@
     hangDelay: 20
     unhangDelay: 20
     restraintPrototype: CrossRestraints
+    occupiedOverlayPrototype: CrossOccupiedOverlay
+    unstrapDistance: 0.85
     northBuckleOffset: "0.08,0.25"
     southBuckleOffset: "0.03,0.23"
     eastBuckleOffset: "0.02,0.22"
@@ -70,4 +72,3 @@
   - type: UseDelay
     delay: 1
   - type: CrossRestraint
-

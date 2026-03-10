@@ -1,7 +1,7 @@
 using System.Numerics;
 using Content.Shared._Forge.Cross;
-using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Destructible;
+using Content.Shared.Movement.Pulling.Components;
 using Robust.Shared.Map;
 
 namespace Content.Server._Forge.Cross;
@@ -38,11 +38,13 @@ public sealed partial class CrossServerSystem
             return;
         }
 
-        EnsureOccupiedOverlay(cross.Owner);
+        EnsureOccupiedOverlay(cross);
     }
 
-    private void EnsureOccupiedOverlay(EntityUid crossUid)
+    private void EnsureOccupiedOverlay(Entity<CrossComponent> cross)
     {
+        var crossUid = cross.Owner;
+
         if (_occupiedOverlays.TryGetValue(crossUid, out var existing))
         {
             if (!TerminatingOrDeleted(existing))
@@ -51,7 +53,7 @@ public sealed partial class CrossServerSystem
             _occupiedOverlays.Remove(crossUid);
         }
 
-        var overlay = Spawn(OccupiedOverlayPrototype, new EntityCoordinates(crossUid, Vector2.Zero));
+        var overlay = Spawn(cross.Comp.OccupiedOverlayPrototype, new EntityCoordinates(crossUid, Vector2.Zero));
         _occupiedOverlays[crossUid] = overlay;
     }
 
@@ -68,6 +70,9 @@ public sealed partial class CrossServerSystem
 
     private void OnCrossShutdown(Entity<CrossComponent> cross, ref ComponentShutdown args)
     {
+        if (TryGetHungTarget(cross, out var target))
+            TryUnhangTarget(cross, target, applyBreakEffects: cross.Comp.BreakInProgress);
+
         PrepareCrossForRemoval(cross, breakInProgress: cross.Comp.BreakInProgress);
     }
 
@@ -221,14 +226,14 @@ public sealed partial class CrossServerSystem
     {
         target = default;
 
-        var query = EntityQueryEnumerator<HungOnCrossComponent>();
-        while (query.MoveNext(out var uid, out var hung))
+        var children = Transform(cross.Owner).ChildEnumerator;
+        while (children.MoveNext(out var child))
         {
-            if (hung.Cross != cross.Owner)
+            if (!IsHungOnCross(child, cross.Owner))
                 continue;
 
-            cross.Comp.HungTarget = uid;
-            target = uid;
+            cross.Comp.HungTarget = child;
+            target = child;
             return true;
         }
 
@@ -266,16 +271,14 @@ public sealed partial class CrossServerSystem
             return;
 
         var direction = _transform.GetWorldRotation(cross.Owner).GetCardinalDir();
-        var offset = GetUnstrapOffset(direction);
+        var offset = GetUnstrapOffset(direction, cross.Comp.UnstrapDistance);
         var crossCoords = _transform.GetMapCoordinates(cross.Owner);
         var targetMapCoords = new MapCoordinates(crossCoords.Position + offset, crossCoords.MapId);
         _transform.SetMapCoordinates(target, targetMapCoords);
     }
 
-    private static Vector2 GetUnstrapOffset(Direction direction)
+    private static Vector2 GetUnstrapOffset(Direction direction, float distance)
     {
-        const float distance = 0.85f;
-
         return direction switch
         {
             Direction.North => new Vector2(0f, -distance),

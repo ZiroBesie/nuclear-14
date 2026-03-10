@@ -1,4 +1,5 @@
 using Content.Shared._Forge.Cross;
+using Content.Shared.Hands.Components;
 using Content.Shared.Interaction;
 
 namespace Content.Server._Forge.Cross;
@@ -14,6 +15,9 @@ public sealed partial class CrossServerSystem
             return false;
 
         if (!ValidateTargetNotAlreadyHung(cross, user, target, popup))
+            return false;
+
+        if (!ValidateTargetHasHands(cross, user, target, popup))
             return false;
 
         if (!ValidateCrossNotOccupiedByOtherTarget(cross, user, target, popup))
@@ -58,6 +62,17 @@ public sealed partial class CrossServerSystem
     private bool ValidateTargetNotAlreadyHung(Entity<CrossComponent> cross, EntityUid user, EntityUid target, bool popup)
     {
         if (!TryComp<HungOnCrossComponent>(target, out var hung) || hung.Cross is not { })
+            return true;
+
+        if (popup)
+            PopupHangFail(cross, user, target);
+
+        return false;
+    }
+
+    private bool ValidateTargetHasHands(Entity<CrossComponent> cross, EntityUid user, EntityUid target, bool popup)
+    {
+        if (TryComp<HandsComponent>(target, out var hands) && hands.Count > 0)
             return true;
 
         if (popup)

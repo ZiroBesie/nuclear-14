@@ -18,8 +18,6 @@ namespace Content.Server._Forge.Cross;
 
 public sealed partial class CrossServerSystem : EntitySystem
 {
-    private const string OccupiedOverlayPrototype = "CrossOccupiedOverlay";
-
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
     [Dependency] private readonly SharedContainerSystem _container = default!;
     [Dependency] private readonly SharedCuffableSystem _cuffs = default!;

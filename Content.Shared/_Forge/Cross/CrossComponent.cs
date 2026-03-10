@@ -1,8 +1,8 @@
 using System.Numerics;
 using Content.Shared.Damage;
 using Content.Shared.DoAfter;
-using Robust.Shared.Prototypes;
 using Robust.Shared.GameStates;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared._Forge.Cross;
@@ -18,6 +18,12 @@ public sealed partial class CrossComponent : Component
 
     [DataField("restraintPrototype")]
     public EntProtoId RestraintPrototype = "CrossRestraints";
+
+    [DataField("occupiedOverlayPrototype")]
+    public EntProtoId OccupiedOverlayPrototype = "CrossOccupiedOverlay";
+
+    [DataField("unstrapDistance")]
+    public float UnstrapDistance = 0.85f;
 
     [DataField("northBuckleOffset")]
     public Vector2 NorthBuckleOffset = new(0.08f, 0.25f);
