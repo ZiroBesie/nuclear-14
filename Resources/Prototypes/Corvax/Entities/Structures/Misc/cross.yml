@@ -1,5 +1,5 @@
 - type: entity
-  id: N14Cross
+  id: Cross
   parent: BaseStructure
   name: cross
   description: A heavy wooden cross for public punishment.
@@ -9,22 +9,18 @@
     sprite: Corvax/Structures/Misc/cross.rsi
     layers:
     - state: cross_empty
-  - type: Strap
-    position: Stand
-    buckleOffset: "0,0.22"
-    buckleOnInteractHand: false
-    buckleSound:
-      path: /Audio/Effects/silence.ogg
-    unbuckleSound:
-      path: /Audio/Effects/silence.ogg
-  - type: N14Cross
+  - type: Cross
     hangDelay: 20
     unhangDelay: 20
-    restraintPrototype: N14CrossRestraints
+    restraintPrototype: CrossRestraints
     northBuckleOffset: "0.08,0.25"
     southBuckleOffset: "0.03,0.23"
     eastBuckleOffset: "0.02,0.22"
     westBuckleOffset: "-0.02,0.22"
+    breakStunDuration: 4
+    breakDamage:
+      types:
+        Blunt: 10
   - type: InteractionOutline
   - type: Damageable
     damageContainer: Inorganic
@@ -50,7 +46,7 @@
     - Wooden
 
 - type: entity
-  id: N14CrossOccupiedOverlay
+  id: CrossOccupiedOverlay
   save: false
   categories: [ HideSpawnMenu ]
   components:
@@ -63,7 +59,7 @@
     - HideContextMenu
 
 - type: entity
-  id: N14CrossRestraints
+  id: CrossRestraints
   parent: BaseItem
   categories: [ HideSpawnMenu ]
   components:
@@ -73,7 +69,5 @@
     breakOnRemove: true
   - type: UseDelay
     delay: 1
-  - type: N14CrossRestraint
-
-
+  - type: CrossRestraint
 

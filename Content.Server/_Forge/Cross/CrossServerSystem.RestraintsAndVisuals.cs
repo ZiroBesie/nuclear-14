@@ -1,6 +1,5 @@
 using System.Linq;
-using Content.Shared._N14.Cross;
-using Content.Shared.Buckle.Components;
+using Content.Shared._Forge.Cross;
 using Content.Shared.Cuffs.Components;
 using Content.Shared.Hands.Components;
 using Content.Shared.Mobs;
@@ -8,9 +7,9 @@ using Content.Shared.Mobs.Components;
 using Content.Shared.Rotation;
 using Content.Shared.Standing;
 
-namespace Content.Server._N14.Cross;
+namespace Content.Server._Forge.Cross;
 
-public sealed partial class N14CrossServerSystem
+public sealed partial class CrossServerSystem
 {
     private void OnUncuffAttempt(ref UncuffAttemptEvent args)
     {
@@ -18,35 +17,37 @@ public sealed partial class N14CrossServerSystem
             return;
 
         args.Cancelled = true;
-        if (Exists(args.User))
+
+        if (!Exists(args.User))
+            return;
+
+        if (!TryComp<HungOnCrossComponent>(args.Target, out var hung) ||
+            hung.Cross is not { } crossUid ||
+            !TryComp<CrossComponent>(crossUid, out var crossComp))
+        {
             _popup.PopupClient(Loc.GetString("n14-cross-popup-cant-uncuff-while-hung"), args.User, args.User);
+            return;
+        }
+
+        TryStartUnhangAction((crossUid, crossComp), args.User, args.Target, popup: true);
     }
 
-    private void OnMobStateChanged(EntityUid uid, BuckleComponent component, MobStateChangedEvent args)
+    private void OnMobStateChanged(EntityUid uid, HungOnCrossComponent component, MobStateChangedEvent args)
     {
-        if (!IsBuckledToCross(component))
-            return;
-
-        RefreshMobStateVisual(uid, args.Component, component);
+        RefreshMobStateVisual(uid, args.Component);
     }
 
-    private void OnDowned(Entity<BuckleComponent> ent, ref DownedEvent args)
+    private void OnDowned(EntityUid uid, HungOnCrossComponent component, ref DownedEvent args)
     {
-        if (!IsBuckledToCross(ent.Comp))
-            return;
-
-        _appearance.SetData(ent.Owner, RotationVisuals.RotationState, RotationState.Vertical);
+        _appearance.SetData(uid, RotationVisuals.RotationState, RotationState.Vertical);
     }
 
     private bool IsHungOnCrossWithCrossRestraints(EntityUid target)
     {
-        if (!TryComp<BuckleComponent>(target, out var buckle) || buckle.BuckledTo is not { } strap)
-            return false;
-
-        return HasComp<N14CrossComponent>(strap) && HasCrossRestraints(target);
+        return IsHungOnCross(target) && HasCrossRestraints(target);
     }
 
-    private void ApplyRestraints(Entity<N14CrossComponent> cross, EntityUid target)
+    private void ApplyRestraints(Entity<CrossComponent> cross, EntityUid target)
     {
         if (!TryComp<HandsComponent>(target, out _))
             return;
@@ -67,8 +68,9 @@ public sealed partial class N14CrossServerSystem
 
         foreach (var cuffs in _cuffs.GetAllCuffs(cuffable).ToArray())
         {
-            if (!HasComp<N14CrossRestraintComponent>(cuffs))
+            if (!HasComp<CrossRestraintComponent>(cuffs))
                 continue;
+
             var cuffsBefore = cuffable.CuffedHandCount;
             _cuffs.Uncuff(target, null, cuffs, cuffable);
 
@@ -81,26 +83,26 @@ public sealed partial class N14CrossServerSystem
         }
     }
 
-    private void RefreshMobStateVisual(EntityUid target, MobStateComponent? mobState = null, BuckleComponent? buckle = null)
+    private void RefreshMobStateVisual(EntityUid target, MobStateComponent? mobState = null)
     {
         if (!Resolve(target, ref mobState, false))
             return;
 
-        Resolve(target, ref buckle, false);
-
         var visualState = mobState.CurrentState;
-        if (IsBuckledToCross(buckle) && visualState is MobState.Critical or MobState.SoftCritical)
+        if (IsHungOnCross(target) && visualState is MobState.Critical or MobState.SoftCritical)
             visualState = MobState.Alive;
 
         _appearance.SetData(target, MobStateVisuals.State, visualState);
 
-        if (IsBuckledToCross(buckle))
+        if (IsHungOnCross(target))
             _appearance.SetData(target, RotationVisuals.RotationState, RotationState.Vertical);
     }
 
-    private bool IsBuckledToCross(BuckleComponent? buckle)
+    private bool IsHungOnCross(EntityUid target)
     {
-        return buckle?.BuckledTo is { } strap && HasComp<N14CrossComponent>(strap);
+        return TryComp<HungOnCrossComponent>(target, out var hung)
+               && hung.Cross is { } cross
+               && HasComp<CrossComponent>(cross);
     }
 
     private bool HasCrossRestraints(EntityUid target)
@@ -111,6 +113,6 @@ public sealed partial class N14CrossServerSystem
 
     private bool HasCrossRestraints(Entity<CuffableComponent> ent)
     {
-        return _cuffs.GetAllCuffs(ent.Comp).Any(cuffs => HasComp<N14CrossRestraintComponent>(cuffs));
+        return _cuffs.GetAllCuffs(ent.Comp).Any(cuffs => HasComp<CrossRestraintComponent>(cuffs));
     }
 }

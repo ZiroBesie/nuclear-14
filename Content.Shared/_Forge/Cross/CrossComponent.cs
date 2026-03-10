@@ -1,13 +1,14 @@
 using System.Numerics;
+using Content.Shared.Damage;
 using Content.Shared.DoAfter;
-using Robust.Shared.Maths;
 using Robust.Shared.Prototypes;
+using Robust.Shared.GameStates;
 using Robust.Shared.Serialization;
 
-namespace Content.Shared._N14.Cross;
+namespace Content.Shared._Forge.Cross;
 
 [RegisterComponent]
-public sealed partial class N14CrossComponent : Component
+public sealed partial class CrossComponent : Component
 {
     [DataField("hangDelay")]
     public TimeSpan HangDelay = TimeSpan.FromSeconds(20);
@@ -16,7 +17,7 @@ public sealed partial class N14CrossComponent : Component
     public TimeSpan UnhangDelay = TimeSpan.FromSeconds(20);
 
     [DataField("restraintPrototype")]
-    public EntProtoId RestraintPrototype = "N14CrossRestraints";
+    public EntProtoId RestraintPrototype = "CrossRestraints";
 
     [DataField("northBuckleOffset")]
     public Vector2 NorthBuckleOffset = new(0.08f, 0.25f);
@@ -30,20 +31,32 @@ public sealed partial class N14CrossComponent : Component
     [DataField("westBuckleOffset")]
     public Vector2 WestBuckleOffset = new(-0.24f, 0.22f);
 
-    [ViewVariables]
-    public bool Busy;
+    [DataField("breakStunDuration")]
+    public TimeSpan BreakStunDuration = TimeSpan.FromSeconds(4);
+
+    [DataField("breakDamage")]
+    public DamageSpecifier BreakDamage = new() { DamageDict = new() { ["Blunt"] = 10 } };
 
     [ViewVariables]
-    public TimeSpan? BusyUntil;
+    public bool BreakInProgress;
 
     [ViewVariables]
-    public bool BypassNextHangAttempt;
+    public EntityUid? HungTarget;
 
     [ViewVariables]
-    public bool BypassNextUnhangAttempt;
+    public CrossActionState ActionState = CrossActionState.Idle;
 
     [ViewVariables]
-    public bool AllowNextUnstrap;
+    public TimeSpan? ActionDeadline;
+
+    [ViewVariables]
+    public EntityUid? ActiveUser;
+
+    [ViewVariables]
+    public EntityUid? ActiveTarget;
+
+    [ViewVariables]
+    public uint ActionId;
 
     public Vector2 GetBuckleOffset(Direction direction, Vector2 fallback)
     {
@@ -58,17 +71,36 @@ public sealed partial class N14CrossComponent : Component
     }
 }
 
+public enum CrossActionState : byte
+{
+    Idle = 0,
+    HangPending,
+    UnhangPending
+}
+
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
+public sealed partial class HungOnCrossComponent : Component
+{
+    [DataField, AutoNetworkedField]
+    public EntityUid? Cross;
+}
+
 [Serializable, NetSerializable]
-public sealed partial class N14CrossHangDoAfterEvent : SimpleDoAfterEvent
+public sealed partial class CrossHangDoAfterEvent : SimpleDoAfterEvent
 {
     [DataField]
     public NetEntity HangTarget;
+
+    [DataField]
+    public uint ActionId;
 }
 
 [Serializable, NetSerializable]
-public sealed partial class N14CrossUnhangDoAfterEvent : SimpleDoAfterEvent
+public sealed partial class CrossUnhangDoAfterEvent : SimpleDoAfterEvent
 {
     [DataField]
     public NetEntity UnhangTarget;
-}
 
+    [DataField]
+    public uint ActionId;
+}
