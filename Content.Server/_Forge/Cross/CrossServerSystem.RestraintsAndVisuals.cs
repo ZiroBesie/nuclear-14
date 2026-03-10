@@ -83,6 +83,17 @@ public sealed partial class CrossServerSystem
         }
     }
 
+    private void EnsureDownedAfterUnhang(EntityUid target, MobStateComponent? mobState = null)
+    {
+        if (!Resolve(target, ref mobState, false))
+            return;
+
+        if (mobState.CurrentState is not (MobState.Dead or MobState.Critical or MobState.SoftCritical))
+            return;
+
+        _standing.Down(target, playSound: false, dropHeldItems: false);
+    }
+
     private void RefreshMobStateVisual(EntityUid target, MobStateComponent? mobState = null)
     {
         if (!Resolve(target, ref mobState, false))
@@ -95,7 +106,19 @@ public sealed partial class CrossServerSystem
         _appearance.SetData(target, MobStateVisuals.State, visualState);
 
         if (IsHungOnCross(target))
+        {
             _appearance.SetData(target, RotationVisuals.RotationState, RotationState.Vertical);
+            return;
+        }
+
+        if (TryComp<StandingStateComponent>(target, out var standing))
+        {
+            var rotationState = standing.CurrentState == StandingState.Standing
+                ? RotationState.Vertical
+                : RotationState.Horizontal;
+
+            _appearance.SetData(target, RotationVisuals.RotationState, rotationState);
+        }
     }
 
     private bool IsHungOnCross(EntityUid target)
@@ -116,3 +139,4 @@ public sealed partial class CrossServerSystem
         return _cuffs.GetAllCuffs(ent.Comp).Any(cuffs => HasComp<CrossRestraintComponent>(cuffs));
     }
 }
+

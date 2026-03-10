@@ -198,6 +198,7 @@ public sealed partial class CrossServerSystem
     private void FinalizeUnhang(Entity<CrossComponent> cross, EntityUid target)
     {
         RemoveRestraints(target);
+        EnsureDownedAfterUnhang(target);
         RefreshMobStateVisual(target);
         UpdateOccupiedOverlay(cross);
     }
@@ -298,3 +299,4 @@ public sealed partial class CrossServerSystem
         _stun.TryParalyze(target, cross.Comp.BreakStunDuration, refresh: true);
     }
 }
+
