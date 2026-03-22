@@ -15,7 +15,7 @@
       department: Townsfolk
       min: 7200
   startingGear: TownDoctorGear
-  icon: "JobIconTownMedic" # Corvax-Change
+  icon: "JobIconTownMedic" # Forge-Change
   supervisors: job-supervisors-townsfolk
   alwaysUseSpawner: true # Forge-Change
   access:

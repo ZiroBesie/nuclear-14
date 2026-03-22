@@ -15,7 +15,7 @@
       department: Townsfolk
       min: 36000 # 10 hours
   startingGear: TownMayorGear
-  icon: "JobIconTownMayor" # Corvax-Change
+  icon: "JobIconTownMayor" # Forge-Change
   supervisors: job-supervisors-townsfolk
   alwaysUseSpawner: true # Forge-Change
   accessGroups:
