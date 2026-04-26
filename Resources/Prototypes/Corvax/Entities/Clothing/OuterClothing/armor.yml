@@ -107,6 +107,17 @@
 
 - type: entity
   parent: N14ClothingOuterLegionnaireVeteranArmor
+  id: N14ClothingOuterLegionnaireTwoSunArmor
+  name: броня  венатора из двух солнц
+  description: "Roughly stitched leather and a pair of worn shoulder pads conquered Arizona"
+  components:
+  - type: Sprite
+    sprite: Corvax/Clothing/OuterClothing/Armor/twosunarmor.rsi
+  - type: Clothing
+    sprite: Corvax/Clothing/OuterClothing/Armor/twosunarmor.rsi
+
+- type: entity
+  parent: N14ClothingOuterLegionnaireVeteranArmor
   id: N14ClothingOuterLegionnaireArmorPrimeGastat
   name: legionary prime gastat armor
   description: "One of the most impressive serial bull armors"
@@ -679,7 +690,7 @@
     priceMultiplier: 0.6
   - type: ExplosionResistance
     damageCoefficient: 0.7
-  - type: ClothingSpeedModifier 
+  - type: ClothingSpeedModifier
     walkModifier: 1.05
     sprintModifier: 1.05
 
@@ -703,7 +714,7 @@
     priceMultiplier: 0.6
   - type: ExplosionResistance
     damageCoefficient: 0.8
-  - type: ClothingSpeedModifier 
+  - type: ClothingSpeedModifier
     walkModifier: 1.05
     sprintModifier: 1.05
   - type: ToggleableClothing

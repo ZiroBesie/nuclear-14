@@ -11,6 +11,17 @@
 
 - type: entity
   parent: ClothingNeckBase
+  id: N14ClothingNeckThragg
+  name: Плащ из шкуры яо гая альбиноса
+  description: "В каком то комиксе я это уже видел."
+  components:
+  - type: Sprite
+    sprite: Corvax/Clothing/Neck/thragg.rsi
+  - type: Clothing
+    sprite: Corvax/Clothing/Neck/thragg.rsi
+
+- type: entity
+  parent: ClothingNeckBase
   id: N14ClothingNeckMantleSheriff
   name: sheriff cape
   description: "The concealing garb of the regional sheriff."

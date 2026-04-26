@@ -52,6 +52,7 @@
     powerLoad: 100
   - type: ExtensionCableReceiver
   - type: ActivatableUIRequiresPower
+  - type: N14Terminal
   - type: LitOnPowered
   - type: PointLight
     radius: 1.5
@@ -160,6 +161,44 @@
   name: terminal
   description: A computer terminal. Looks aged.
   components:
+  - type: ActivatableUI
+    key: enum.N14TerminalUiKey.Key
+  - type: UserInterface
+    interfaces:
+      enum.N14TerminalUiKey.Key:
+        type: N14TerminalBoundUserInterface
+  - type: N14Terminal
+    terminalTitle: ROBCO INDUSTRIES UNIFIED OPERATING SYSTEM
+    categories:
+    - categoryName: About
+      content: |
+        Welcome to the ROBCO Industries Unified Operating System.
+        Copyrights 2075-2077 Robco Industries.
+        -=Caution=-
+        Always back up your data.
+    - categoryName: Locations
+      content: |
+        [VAULT-TEC APPROVED LOCATIONS]
+        > Vault 101 - Washington, D.C.
+        > Vault 111 - Massachusetts
+        > Vault 81  - Massachusetts
+        > Vault 21  - Las Vegas Strip
+        All vaults are equipped with standard amenities.
+    - categoryName: Safety
+      content: |
+        [SAFETY PROTOCOLS]
+        1. In case of nuclear emergency - remain calm.
+        2. Proceed to the nearest vault immediately.
+        3. Follow instructions of vault staff.
+        4. Do not attempt to return to surface.
+        Estimated safe return: 200 years.
+    - categoryName: Contacts
+      content: |
+        [EMERGENCY CONTACTS]
+        Vault-Tec Hotline: 1-800-4-VAULTTEC
+        ROBCO Support:    1-800-ROBCO-11
+        Pip-Boy Helpdesk: 1-800-PIP-3000
+        Lines may be unavailable post-event.
   - type: Sprite
     sprite: _Nuclear14/Structures/Machines/Terminals/terminal.rsi
     layers:

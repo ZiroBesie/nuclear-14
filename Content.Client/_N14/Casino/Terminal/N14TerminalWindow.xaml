@@ -1,0 +1,68 @@
+<ui:FancyWindow xmlns="https://spacestation14.io"
+               xmlns:ui="clr-namespace:Content.Client.UserInterface.Controls"
+               xmlns:gfx="clr-namespace:Robust.Client.Graphics;assembly=Robust.Client"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               x:Class="Content.Client._N14.Terminal.N14TerminalWindow"
+               SetSize="720 520"
+               Title="ROBCO INDUSTRIES UNIFIED OPERATING SYSTEM">
+
+    <!-- Основной фон: тёмно-зелёный как CRT экран -->
+    <PanelContainer HorizontalExpand="True" VerticalExpand="True">
+        <PanelContainer.PanelOverride>
+            <gfx:StyleBoxFlat BackgroundColor="#050F05" />
+        </PanelContainer.PanelOverride>
+        <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" Margin="0">
+
+            <!-- Заголовок -->
+            <PanelContainer HorizontalExpand="True">
+                <PanelContainer.PanelOverride>
+                    <gfx:StyleBoxFlat BackgroundColor="#0A1A0A" BorderThickness="0 0 0 1" BorderColor="#33FF33" />
+                </PanelContainer.PanelOverride>
+                <BoxContainer Orientation="Horizontal" Margin="8 6 8 6">
+                    <Label Name="TerminalTitleLabel"
+                           Text="ROBCO INDUSTRIES UNIFIED OPERATING SYSTEM"
+                           FontColorOverride="#33FF33"
+                           HorizontalExpand="True" />
+                </BoxContainer>
+            </PanelContainer>
+
+            <!-- Подзаголовок с именем категории -->
+            <PanelContainer HorizontalExpand="True">
+                <PanelContainer.PanelOverride>
+                    <gfx:StyleBoxFlat BackgroundColor="#061006" BorderThickness="0 0 0 1" BorderColor="#1A5C1A" />
+                </PanelContainer.PanelOverride>
+                <Label Name="CategoryTitleLabel"
+                       Text="&gt; SELECT CATEGORY"
+                       FontColorOverride="#1FCC1F"
+                       Margin="8 4 8 4" />
+            </PanelContainer>
+            <!-- Основной контент: левая колонка + правая -->
+            <BoxContainer Orientation="Horizontal" HorizontalExpand="True" VerticalExpand="True">
+
+                <!-- Левая панель: список категорий -->
+                <PanelContainer MinWidth="190">
+                    <PanelContainer.PanelOverride>
+                        <gfx:StyleBoxFlat BackgroundColor="#050F05" BorderThickness="0 0 1 0" BorderColor="#1A5C1A" />
+                    </PanelContainer.PanelOverride>
+                    <ItemList Name="CategoryList"
+                              SelectMode="Button"
+                              HorizontalExpand="True"
+                              VerticalExpand="True"
+                              Margin="0" />
+                </PanelContainer>
+
+                <!-- Правая панель: содержимое -->
+                <ScrollContainer HorizontalExpand="True" VerticalExpand="True">
+                    <Label Name="ContentLabel"
+                           Margin="12 10 12 10"
+                           FontColorOverride="#1FCC1F"
+                           HorizontalExpand="True"
+                           VerticalExpand="True"
+                           ClipText="False" />
+                </ScrollContainer>
+
+            </BoxContainer>
+
+        </BoxContainer>
+    </PanelContainer>
+</ui:FancyWindow>

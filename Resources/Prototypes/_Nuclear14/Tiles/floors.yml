@@ -2104,13 +2104,11 @@
 - type: tile
   id: FloorN14Ice
   name: лёд (новый)
-  parent: FloorAstroIce
   sprite: /Textures/_Nuclear14/Tiles/SnowIce/icetail.png
   baseTurf: Plating
   isSubfloor: false
-  friction: 0.05
+  friction: 0.30
   heatCapacity: 10000
-  mobFriction: 0.5
-  mobFrictionNoInput: 0.05
-  mobAcceleration: 2
   tileRipResistance: 50
+  weather: true
+  indestructible: true
