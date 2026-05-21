@@ -1747,7 +1747,7 @@
   sprite: /Textures/_Nuclear14/Tiles/wasteland.png
   variants: 4
   placementVariants: [0, 1, 2, 3]
-  baseTurf: space
+  baseTurf: FloorWasteland
   isSubfloor: true
   footstepSounds:
     collection: N14FootstepDirt
@@ -1756,6 +1756,7 @@
   heatCapacity: 10000
   weather: true
   indestructible: true
+
 
 - type: tile
   id: FloorDirtNew

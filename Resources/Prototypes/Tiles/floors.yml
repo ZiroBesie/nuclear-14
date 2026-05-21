@@ -1991,7 +1991,7 @@
   - 1.0
   - 1.0
   - 1.0
-  baseTurf: Plating
+  baseTurf: FloorWasteland
   isSubfloor: false
   deconstructTools: [ Prying ]
   footstepSounds:
