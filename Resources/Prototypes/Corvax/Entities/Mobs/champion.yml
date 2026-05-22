@@ -1,0 +1,63 @@
+- type: entity
+  name: champion of mars
+  id: N14ChampionOfMars
+  parent: SimpleSpaceMobBase
+  description: two meters of metal, junk and a bizarre helmet with tusks.
+  components:
+  - type: Damageable
+    damageContainer: Biological
+    damageModifierSet: N14ToughAnimal
+  - type: Sprite
+    drawdepth: OverMobs
+    scale: 1.3, 1.3
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: main
+      sprite: Corvax/Mobs/Animals/champion.rsi
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeCircle
+            radius: 0.6 # TODO: Test this can fit through doors
+        density: 200
+        mask:
+        - MobMask
+        layer:
+        - MobLayer
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      250: Critical
+      300: Dead
+  - type: Stamina
+    critThreshold: 999
+  - type: MeleeWeapon
+    altDisarm: false
+    hidden: true
+    soundHit:
+      collection: AlienClaw
+    angle: 60
+    animation: WeaponArcClaw
+    wideAnimation: WeaponArcClaw
+    resistanceBypass: true
+    damage:
+      types:
+        Blunt: 10
+        Slash: 20
+        Piercing: 10
+  - type: Insulated
+  - type: NoSlip
+  - type: MovementSpeedModifier
+    baseWalkSpeed : 3
+    baseSprintSpeed : 7
+  - type: Hands
+  - type: Puller
+  - type: LanguageKnowledge
+    understands:
+    - Latin
+    speaks:
+    - Latin
+  - type: Bloodstream
+    bloodMaxVolume: 100
+

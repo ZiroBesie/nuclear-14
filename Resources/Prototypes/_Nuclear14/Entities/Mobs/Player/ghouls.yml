@@ -7,7 +7,7 @@
     - type: NpcFactionMember
       factions:
       - Wastelander
-  
+
 - type: entity
   save: false
   name: Urist McGlow
