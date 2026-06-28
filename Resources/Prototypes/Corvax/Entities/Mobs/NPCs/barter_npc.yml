@@ -1,0 +1,77 @@
+- type: entity
+  parent: MobHuman
+  id: N14MobHumanBarterNpc
+  abstract: true
+  suffix: barter, NPC
+  components:
+
+  # --- Иконка (как у Urist McHuman) ---
+  - type: Icon
+    sprite: Mobs/Species/Human/parts.rsi
+    state: full
+
+  # --- Внешность ---
+  - type: RandomHumanoidAppearance
+    randomizeName: false
+    forceSex: Male
+
+  # --- Нельзя сдвинуть ---
+  - type: Transform
+    anchored: true
+    noRot: true
+  - type: Physics
+    bodyType: Static
+
+  # --- Неубиваемый (godmode как у админа) ---
+  - type: Godmode
+  - type: Damageable
+    damageModifierSetId: N14TraderImmune
+  - type: MobThresholds
+    thresholds:
+      99999: Critical
+      199999: Dead
+
+  # --- UI бартера ---
+  - type: UserInterface
+    interfaces:
+      enum.BarterNpcUiKey.Key:
+        type: BarterNpcBoundUserInterface
+  - type: ActivatableUI
+    key: enum.BarterNpcUiKey.Key
+    range: 3.0
+  - type: Clickable
+  - type: InteractionOutline
+
+  # --- Бартер-компонент (trades задаются в дочернем прототипе) ---
+  - type: BarterNpc
+
+# =====================================
+# Пример готового торговца
+# =====================================
+- type: entity
+  parent: N14MobHumanBarterNpc
+  id: N14MobHumanBarterNpcExample
+  name: Декан
+  description: Принимает ересь найденную в пустоши.
+  suffix: example
+  components:
+  - type: BarterNpc
+    trades:
+    - giveItem: N14Psycho
+      giveCount: 1
+      receiveItem: N14BerserkerPowder
+      receiveCount: 1
+  - type: Loadout
+    prototypes: [N14BarterExampleGear]
+
+- type: startingGear
+  id: N14BarterExampleGear
+  equipment:
+    jumpsuit: N14ClothingUniformJumpsuitLegionnaire
+    outerClothing: N14ClothingOuterDeanLegionnaireRecruitArmor
+    shoes: N14ClothingBootsCombatMK2
+    gloves: N14ClothingHandsGlovesTribal
+    back: N14ClothingBackpackTrekker
+    head: N14ClothingHeadHatDeanPrimeHelmet
+    id: N14IDLegionaryMedalSilver3
+    belt: ClothingBeltRope

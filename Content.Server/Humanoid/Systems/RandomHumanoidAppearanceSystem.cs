@@ -26,6 +26,9 @@ public sealed class RandomHumanoidAppearanceSystem : EntitySystem
 
         var profile = HumanoidCharacterProfile.RandomWithSpecies(humanoid.Species);
 
+        if (component.ForceSex != null)
+            profile = profile.WithSex(component.ForceSex.Value);
+
         _humanoid.LoadProfile(uid, profile, humanoid);
 
         if (component.RandomizeName)
