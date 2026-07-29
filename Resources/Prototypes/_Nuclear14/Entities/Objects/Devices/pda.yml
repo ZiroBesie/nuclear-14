@@ -57,6 +57,15 @@
       maxDistance: 10
       rolloffFactor: 4
   - type: RadiationReceiver
+  # Custom Pip-Boy UI — replaces the standard PDA interface
+  - type: N14Pipboy
+  - type: ActivatableUI
+    key: enum.N14PipboyUiKey.Key
+    singleUser: true
+  - type: UserInterface
+    interfaces:
+      enum.N14PipboyUiKey.Key:
+        type: N14PipboyBoundUserInterface
 
 - type: entity
   parent: N14BasePipboy

@@ -1,0 +1,96 @@
+<controls:FancyWindow xmlns="https://spacestation14.io"
+                     xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
+                     MinSize="570 530"
+                     SetSize="570 560"
+                     Title="PIP-BOY 2000">
+    <BoxContainer Orientation="Vertical" VerticalExpand="True" HorizontalExpand="True" Margin="4">
+
+        <!-- Tab navigation -->
+        <BoxContainer Orientation="Horizontal" SetHeight="32" Margin="0 0 0 4">
+            <Button Name="StatsTabBtn"     Text="СТАТИСТИКА" HorizontalExpand="True"/>
+            <Button Name="InventoryTabBtn" Text="ИНВЕНТАРЬ"  HorizontalExpand="True"/>
+            <Button Name="RadioTabBtn"     Text="РАДИО"      HorizontalExpand="True"/>
+            <Button Name="NotesTabBtn"     Text="ЗАМЕТКИ"    HorizontalExpand="True"/>
+        </BoxContainer>
+
+        <!-- ═══ STATS PANEL ═══ -->
+        <BoxContainer Name="StatsPanel" Orientation="Vertical" VerticalExpand="True" HorizontalExpand="True">
+            <!-- Header row: date | HP | caps -->
+            <BoxContainer Orientation="Horizontal" Margin="4 2" HorizontalAlignment="Center">
+                <Label Name="DateLabel"  Text="28.07.2275"  Margin="0 0 20 0"/>
+                <Label Name="HpLabel"    Text="ОЗ: ?/?"     Margin="0 0 20 0"/>
+                <Label Name="CapsLabel"  Text="⊙ 0"/>
+            </BoxContainer>
+
+            <!-- Body doll row — centered -->
+            <BoxContainer Orientation="Horizontal"
+                          HorizontalExpand="True" VerticalExpand="True"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Margin="4 8">
+
+                <!-- Left body parts -->
+                <BoxContainer Orientation="Vertical" MinWidth="150" VerticalAlignment="Center" Margin="0 0 12 0">
+                    <Label Name="HeadLabel"     Text="Голова: —"   Margin="0 3"/>
+                    <Label Name="LeftArmLabel"  Text="Л.Рука: —"   Margin="0 3"/>
+                    <Label Name="LeftHandLabel" Text="Л.Кисть: —"  Margin="0 3"/>
+                    <Label Name="LeftLegLabel"  Text="Л.Нога: —"   Margin="0 3"/>
+                    <Label Name="LeftFootLabel" Text="Л.Ступня: —" Margin="0 3"/>
+                </BoxContainer>
+
+                <!-- Sprite (centered) -->
+                <PanelContainer HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <SpriteView Name="PlayerSpriteView"
+                                OverrideDirection="South"
+                                Scale="2 2"
+                                SetSize="96 128"/>
+                </PanelContainer>
+
+                <!-- Right body parts -->
+                <BoxContainer Orientation="Vertical" MinWidth="150" VerticalAlignment="Center" Margin="12 0 0 0">
+                    <Label Name="TorsoLabel"     Text="Торс: —"     Margin="0 3"/>
+                    <Label Name="RightArmLabel"  Text="П.Рука: —"   Margin="0 3"/>
+                    <Label Name="RightHandLabel" Text="П.Кисть: —"  Margin="0 3"/>
+                    <Label Name="RightLegLabel"  Text="П.Нога: —"   Margin="0 3"/>
+                    <Label Name="RightFootLabel" Text="П.Ступня: —" Margin="0 3"/>
+                </BoxContainer>
+
+            </BoxContainer>
+        </BoxContainer>
+
+        <!-- ═══ INVENTORY PANEL ═══ -->
+        <ScrollContainer Name="InventoryPanel" VerticalExpand="True" HorizontalExpand="True">
+            <BoxContainer Name="InventoryList" Orientation="Vertical" HorizontalExpand="True" Margin="4"/>
+        </ScrollContainer>
+
+        <!-- ═══ RADIO PANEL ═══ -->
+        <BoxContainer Name="RadioPanel" Orientation="Vertical" VerticalExpand="True" HorizontalExpand="True">
+            <ItemList Name="MusicList" VerticalExpand="True" SelectMode="Button" Margin="0 0 0 4"/>
+            <Label Name="RadioSongLabel" Text="— нет выбранного трека —" Margin="0 2"/>
+            <Slider Name="RadioSlider" HorizontalExpand="True" Margin="0 2" MinValue="0" MaxValue="1"/>
+            <BoxContainer Orientation="Horizontal" Margin="0 4 0 0">
+                <Button Name="RadioPlayButton"  Text="▶"  MinWidth="50"/>
+                <Button Name="RadioPauseButton" Text="⏸"  MinWidth="50"/>
+                <Button Name="RadioStopButton"  Text="⏹"  MinWidth="50"/>
+                <Label Name="RadioDurationLabel"
+                       HorizontalExpand="True"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"
+                       Text="00:00 / 00:00"/>
+            </BoxContainer>
+        </BoxContainer>
+
+        <!-- ═══ NOTES PANEL ═══ -->
+        <BoxContainer Name="NotesPanel" Orientation="Vertical" VerticalExpand="True" HorizontalExpand="True">
+            <ScrollContainer VerticalExpand="True" HorizontalExpand="True">
+                <BoxContainer Name="NotesList" Orientation="Vertical" HorizontalExpand="True" Margin="4"/>
+            </ScrollContainer>
+            <BoxContainer Orientation="Horizontal" Margin="0 6 0 0">
+                <LineEdit Name="NoteInput" HorizontalExpand="True"
+                          PlaceHolder="Напишите заметку здесь..."/>
+                <Button Name="AddNoteButton" Text="ДОБАВИТЬ" MinWidth="100"/>
+            </BoxContainer>
+        </BoxContainer>
+
+    </BoxContainer>
+</controls:FancyWindow>
