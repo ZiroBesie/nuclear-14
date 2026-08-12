@@ -138,3 +138,47 @@
     speed: 2
     lifetime: 0.025
 
+- type: entity
+  parent: ClothingHandsBase
+  id: N14ClothingHandsBallisticfist
+  name: ballistic fist
+  description: A captured Legion shock gauntlet built around a piston-assisted ram that hurls targets backward.
+  components:
+  - type: Sprite
+    sprite: Corvax/Objects/Weapons/Melee/ballisticfist.rsi
+    state: icon
+  - type: Item
+    size: Normal
+    sprite: Corvax/Objects/Weapons/Melee/ballisticfist.rsi
+  - type: Clothing
+    sprite: Corvax/Objects/Weapons/Melee/ballisticfist.rsi
+    slots: [gloves]
+  - type: MeleeWeapon
+    soundHit:
+      collection: MetalThud
+    range: 1.3
+    attackRate: 0.8
+    damage:
+      types:
+        Blunt: 35
+        Structural: 15
+    animation: WeaponArcFist
+    wideAnimation: WeaponArcFist
+    mustBeEquippedToUse: true
+  - type: Gun
+    fireRate: 6
+    soundGunshot:
+      collection: N14DoubleBarrelShotgunGunshot
+  - type: BallisticAmmoProvider
+    whitelist:
+      tags:
+      - N14ShellShotgun12
+    capacity: 2
+    proto: N14ShellShotgun12
+    mustBeEquippedToUse: true
+  - type: MeleeShootOnHit
+    cooldown: 1.5
+  - type: MeleeThrowOnHit
+    speed: 10
+    lifetime: 0.025
+

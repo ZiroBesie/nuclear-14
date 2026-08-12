@@ -247,3 +247,49 @@
     sprintModifier: 0.90
   - type: StaticPrice
     price: 500
+
+- type: entity
+  name: chinese assault rifle silenced
+  parent: N14WeaponRifleBase
+  id: N14WeaponRifle762ChineseSilenced
+  description: An old foreign assault rifle with strange symbols on it, it is chambered in the old 7.62 ammunition.
+  components:
+  - type: Clothing
+    sprite: Corvax/Objects/Weapons/Guns/Rifles/chineseriflesilenced.rsi
+    quickEquip: false
+    slots:
+    - Back
+    - suitStorage
+  - type: Sprite
+    sprite: Corvax/Objects/Weapons/Guns/Rifles/chineseriflesilenced.rsi
+    layers:
+      - state: base
+        map: ["enum.GunVisualLayers.Base"]
+      - state: mag-0
+        map: ["enum.GunVisualLayers.Mag"]
+  - type: Gun
+    minAngle: 24
+    maxAngle: 46 # Forge-Change
+    angleIncrease: 4
+    angleDecay: 16
+    fireRate: 4
+    soundGunshot:
+      collection: N14PistolSpyGunshot
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Magazine762Rifle
+        insertSound: /Audio/Weapons/Guns/MagIn/ltrifle_magin.ogg
+        ejectSound: /Audio/Weapons/Guns/MagOut/ltrifle_magout.ogg
+        priority: 2
+        whitelist:
+          tags:
+            - N14Magazine762Rifle
+      gun_chamber:
+        name: Chamber
+        startingItem: N14Cartridge762Rifle
+        priority: 1
+        whitelist:
+          tags:
+            - N14Cartridge762Rifle
