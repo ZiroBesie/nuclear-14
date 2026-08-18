@@ -160,25 +160,26 @@
     attackRate: 0.8
     damage:
       types:
-        Blunt: 35
-        Structural: 15
+        Blunt: 40
+        Structural: 20
     animation: WeaponArcFist
     wideAnimation: WeaponArcFist
     mustBeEquippedToUse: true
+  - type: MeleeThrowOnHit
+    speed: 10
+    lifetime: 0.025
+  - type: N14BallisticFist
+    fireCooldown: 1.5
   - type: Gun
-    fireRate: 6
+    fireRate: 1
     soundGunshot:
-      collection: N14DoubleBarrelShotgunGunshot
+      collection: N14ShotgunGunshot
   - type: BallisticAmmoProvider
     whitelist:
       tags:
       - N14ShellShotgun12
     capacity: 2
     proto: N14ShellShotgun12
-    mustBeEquippedToUse: true
-  - type: MeleeShootOnHit
-    cooldown: 1.5
-  - type: MeleeThrowOnHit
-    speed: 10
-    lifetime: 0.025
+    soundInsert:
+      path: /Audio/_Nuclear14/Weapons/Effects/Reload/Shotguns/shotgun_insert.ogg
 
