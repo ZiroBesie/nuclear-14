@@ -30,18 +30,18 @@
       - Wastelander
 
 - type: entity
-  parent: N14MobHumanFollowers
+  parent: N14BaseMobZetan
   id: N14MobHumanZetan
   name: Zetan
   components:
     - type: Icon
+      sprite: _Nuclear14/Markers/Jobs/wastelanders.rsi
       state: zetan
     - type: RandomHumanoidAppearance
       randomizeName: true
-    - type: Loadout
-      prototypes: [ZetanGear]
     - type: NpcFactionMember
       factions:
       - Zetan
+      - Wastelander
 
 #TODO ROBOT

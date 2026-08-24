@@ -609,15 +609,3 @@
     layers:
       - state: green
       - state: zetan
-
-- type: entity
-  id: N14SpawnPointZetan
-  parent: N14SpawnPointWastelander
-  name: Zetan
-  components:
-  - type: SpawnPoint
-    job_id: Zetan
-  - type: Sprite
-    layers:
-      - state: green
-      - state: zetan

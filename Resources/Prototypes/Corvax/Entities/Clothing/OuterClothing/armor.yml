@@ -900,3 +900,24 @@
         Slash: 0.80
         Piercing: 0.85
         Heat: 0.85
+
+- type: entity
+  parent: N14ClothingOuterBase
+  id: M14ClothingOuterDzetanSuit
+  name: dzetan spacesuit
+  description: a spacesuit made of an unknown material.
+  components:
+  - type: Sprite
+    sprite: Corvax/Clothing/OuterClothing/Armor/dzetanarmor.rsi
+  - type: Clothing
+    sprite: Corvax/Clothing/OuterClothing/Armor/dzetanarmor.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.7
+        Slash: 0.7
+        Piercing: 0.65
+        Heat: 0.65
+    priceMultiplier: 0.5
+  - type: ExplosionResistance
+    damageCoefficient: 0.75

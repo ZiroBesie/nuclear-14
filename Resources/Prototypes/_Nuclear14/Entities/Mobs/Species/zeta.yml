@@ -1,0 +1,47 @@
+# Anything zetan specific (e.g. UI, input) goes under N14BaseMobZetan
+- type: entity
+  save: false
+  name: zetan
+  id: N14BaseMobZetan
+  parent: BaseMobSpeciesOrganic
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HumanoidAppearance
+    species: Zetan
+    hideLayersOnEquip: [ Hair, Snout ]
+  - type: Icon
+    sprite: Mobs/Species/Zetan/parts.rsi
+    state: full
+  - type: Perishable
+    rotAfter: 1800
+  - type: Hunger
+  - type: Thirst
+  - type: Carriable
+  - type: Butcherable
+    butcheringType: Spike
+    spawned:
+    - id: FoodMeatHuman
+      amount: 5
+  - type: FootPrints
+  - type: PsionicInsulation
+  - type: RadiationReceiver
+  - type: RadiationHealing # Zetans shrug off radiation with ease.
+  - type: Vocal
+    sounds:
+      Male: MaleZetan
+      Female: FemaleZetan
+      Unsexed: MaleZetan
+  - type: LanguageKnowledge # Tau-Ceti Basic instead of English.
+    speaks:
+    - TauCetiBasic
+    understands:
+    - TauCetiBasic
+
+- type: entity
+  save: false
+  parent: MobHumanDummy
+  id: N14MobZetanDummy
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HumanoidAppearance
+    species: Zetan

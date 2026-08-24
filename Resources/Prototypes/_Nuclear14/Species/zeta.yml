@@ -1,0 +1,157 @@
+- type: species
+  id: Zetan
+  name: species-name-zetan
+  roundStart: true
+  prototype: N14MobZetan
+  sprites: N14MobZetanSprites
+  markingLimits: MobZetanMarkingLimits
+  dollPrototype: N14MobZetanDummy
+  skinColoration: Hues
+  defaultSkinTone: "#a8b09b"
+  minHeight: 0.85 # Forge-Change
+  maxHeight: 1.15 # Forge-Change
+  minWidth: 0.75 # Forge-Change
+  maxWidth: 0.95 # Forge-Change
+
+# The lack of a layer means that
+# this person cannot have round-start anything
+# applied to that layer. It has to instead
+# be defined as a 'custom base layer'
+# in either the mob's starting marking prototype,
+# or it has to be added in C#.
+# N14TODO: unique zetan sprites (big black head, no eyes/hair)
+- type: speciesBaseSprites
+  id: N14MobZetanSprites
+  sprites:
+    Head: N14MobZetanHead
+    Face: MobHumanoidAnyMarking
+    Snout: MobHumanoidAnyMarking
+    Chest: N14MobZetanTorso
+    LArm: N14MobZetanLArm
+    RArm: N14MobZetanRArm
+    LHand: N14MobZetanLHand
+    RHand: N14MobZetanRHand
+    LLeg: N14MobZetanLLeg
+    RLeg: N14MobZetanRLeg
+    LFoot: N14MobZetanLFoot
+    RFoot: N14MobZetanRFoot
+    Tail: MobHumanoidAnyMarking
+    HeadTop: MobHumanoidAnyMarking
+    HeadSide: MobHumanoidAnyMarking
+
+- type: markingPoints
+  id: MobZetanMarkingLimits
+  points:
+    Snout:
+      points: 1
+      required: false
+    HeadTop:
+      points: 1
+      required: false
+    HeadSide:
+      points: 4
+      required: false
+    Chest:
+      points: 1
+      required: false
+
+- type: humanoidBaseSprite
+  id: N14MobZetanHead
+  matchSkin: false # sprite is already colored
+  baseSprite:
+    sprite: Mobs/Species/Zetan/parts.rsi
+    state: head_m
+
+# Head/Chest layers are always sex-morphed client-side,
+# so Male/Female variants must exist.
+- type: humanoidBaseSprite
+  id: N14MobZetanHeadMale
+  matchSkin: false # sprite is already colored
+  baseSprite:
+    sprite: Mobs/Species/Zetan/parts.rsi
+    state: head_m
+
+- type: humanoidBaseSprite
+  id: N14MobZetanHeadFemale
+  matchSkin: false # sprite is already colored
+  baseSprite:
+    sprite: Mobs/Species/Zetan/parts.rsi
+    state: head_m # N14TODO: add head_f to parts.rsi
+
+- type: humanoidBaseSprite
+  id: N14MobZetanTorso
+  matchSkin: false # sprite is already colored
+  baseSprite:
+    sprite: Mobs/Species/Zetan/parts.rsi
+    state: torso_m
+
+- type: humanoidBaseSprite
+  id: N14MobZetanTorsoMale
+  matchSkin: false # sprite is already colored
+  baseSprite:
+    sprite: Mobs/Species/Zetan/parts.rsi
+    state: torso_m
+
+- type: humanoidBaseSprite
+  id: N14MobZetanTorsoFemale
+  matchSkin: false # sprite is already colored
+  baseSprite:
+    sprite: Mobs/Species/Zetan/parts.rsi
+    state: torso_m # N14TODO: add torso_f to parts.rsi
+
+
+- type: humanoidBaseSprite
+  id: N14MobZetanLLeg
+  matchSkin: false # sprite is already colored
+  baseSprite:
+    sprite: Mobs/Species/Zetan/parts.rsi
+    state: l_leg
+
+- type: humanoidBaseSprite
+  id: N14MobZetanLArm
+  matchSkin: false # sprite is already colored
+  baseSprite:
+    sprite: Mobs/Species/Zetan/parts.rsi
+    state: l_arm
+
+- type: humanoidBaseSprite
+  id: N14MobZetanLHand
+  matchSkin: false # sprite is already colored
+  baseSprite:
+    sprite: Mobs/Species/Zetan/parts.rsi
+    state: l_hand
+
+- type: humanoidBaseSprite
+  id: N14MobZetanLFoot
+  matchSkin: false # sprite is already colored
+  baseSprite:
+    sprite: Mobs/Species/Zetan/parts.rsi
+    state: l_foot
+
+- type: humanoidBaseSprite
+  id: N14MobZetanRLeg
+  matchSkin: false # sprite is already colored
+  baseSprite:
+    sprite: Mobs/Species/Zetan/parts.rsi
+    state: r_leg
+
+- type: humanoidBaseSprite
+  id: N14MobZetanRArm
+  matchSkin: false # sprite is already colored
+  baseSprite:
+    sprite: Mobs/Species/Zetan/parts.rsi
+    state: r_arm
+
+- type: humanoidBaseSprite
+  id: N14MobZetanRHand
+  matchSkin: false # sprite is already colored
+  baseSprite:
+    sprite: Mobs/Species/Zetan/parts.rsi
+    state: r_hand
+
+- type: humanoidBaseSprite
+  id: N14MobZetanRFoot
+  matchSkin: false # sprite is already colored
+  baseSprite:
+    sprite: Mobs/Species/Zetan/parts.rsi
+    state: r_foot

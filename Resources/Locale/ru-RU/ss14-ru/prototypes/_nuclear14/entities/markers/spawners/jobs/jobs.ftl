@@ -157,5 +157,3 @@ ent-N14SpawnPointWestGunsmith = Оруженосец ЗБС
     .desc = { ent-N14SpawnPointWastelander.desc }
 
 # НЕИГРОВЫЕ 
-ent-N14SpawnPointZetan = Дзетан
-    .desc = { ent-N14SpawnPointWastelander.desc }

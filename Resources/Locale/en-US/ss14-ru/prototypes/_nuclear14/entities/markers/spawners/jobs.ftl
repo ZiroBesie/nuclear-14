@@ -96,5 +96,3 @@ ent-N14SpawnPointTownsfolkTownMayor = town mayor
     .desc = { ent-N14SpawnPointWastelander.desc }
 ent-N14SpawnPointFollowers = followers of the apocalypse
     .desc = { ent-N14SpawnPointWastelander.desc }
-ent-N14SpawnPointZetan = Zetan
-    .desc = { ent-N14SpawnPointWastelander.desc }
