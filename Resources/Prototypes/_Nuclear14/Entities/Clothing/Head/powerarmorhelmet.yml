@@ -566,6 +566,53 @@
     pulseTime: 2
     toggleAction: PulseThermalVision
 
+# Зетанский силовой шлем (без фонаря — в спрайте нет состояний подсветки)
+- type: entity
+  parent: ClothingHeadBase
+  id: N14ClothingHeadHelmetPowerArmorZetan
+  name: zetan power armor helmet
+  description: An alien helmet of unknown origin. The dark visor seems to study everything around it.
+  components:
+  - type: Sprite
+    netsync: false
+    sprite: Corvax/Clothing/Head/PowerArmorHelmets/alienpa.rsi
+    layers:
+    - state: icon
+  - type: Clothing
+    sprite: Corvax/Clothing/Head/PowerArmorHelmets/alienpa.rsi
+    equipSound:
+      path: /Audio/_Nuclear14/Effects/PowerArmor/PowerArmor_Equip_Helmet_01.ogg
+      params:
+        volume: -12
+    unequipSound:
+      path: /Audio/_Nuclear14/Effects/PowerArmor/PowerArmor_Equip_Helmet_01.ogg
+      params:
+        volume: -12
+    quickEquip: true
+    clothingVisuals:
+      head:
+      - state: off-equipped-HELMET
+  - type: EyeProtection
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.8
+        Slash: 0.8
+        Piercing: 0.85
+        Heat: 0.85
+        Radiation: 0.6
+      flatReductions:
+        Blunt: 2
+        Slash: 2
+        Piercing: 1
+        Heat: 1
+  - type: ExplosionResistance
+    damageCoefficient: 0.85
+  - type: Tag
+    tags:
+    - HidesHair
+    - HidesBeard
+
 - type: entity
   parent: N14ClothingHeadHelmetPowerArmorT51
   id: N14ClothingHeadHelmetPowerArmorT51Wash

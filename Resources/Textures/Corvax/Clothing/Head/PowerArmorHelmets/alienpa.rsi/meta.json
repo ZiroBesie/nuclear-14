@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "license": "CC-BY-NC-SA-4.0",
+  "copyright": "by bane (discord)",
+  "size": {
+    "x": 64,
+    "y": 64
+  },
+  "states": [
+    {
+      "name": "icon"
+    },
+    {
+      "name": "off-equipped-HELMET",
+      "directions": 4
+    }
+  ]
+}

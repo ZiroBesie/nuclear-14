@@ -661,3 +661,24 @@
       gloves: N14ClothingPAGauntlets
       shoes: N14ClothingPABoots
       back: N14ClothingPowerSystemsBack
+
+# Зетанская силовая броня
+- type: entity
+  parent: N14ClothingOuterPowerArmorT45
+  id: N14ClothingOuterPowerArmorZetan
+  name: zetan power armor
+  description: Bizarre alien armor of unknown origin. Its technology is far beyond anything made on Earth.
+  components:
+  - type: Sprite
+    sprite: Corvax/Clothing/OuterClothing/PowerArmor/AlienPA.rsi
+  - type: Clothing
+    sprite: Corvax/Clothing/OuterClothing/PowerArmor/AlienPA.rsi
+  - type: ToggleableClothing
+    requiredSlot: outerClothing
+    blockUnequipWhenAttached: true
+    replaceCurrentClothing: false
+    clothingPrototypes:
+      head: N14ClothingHeadHelmetPowerArmorZetan
+      gloves: N14ClothingPAGauntlets
+      shoes: N14ClothingPABoots
+      back: N14ClothingPowerSystemsBack
