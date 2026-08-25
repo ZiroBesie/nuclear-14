@@ -61,3 +61,13 @@
   - type: Sprite
     sprite: Corvax/Structures/Wallmount/wallflags_64x64.rsi
     state: wallflag_woodland
+
+- type: entity
+  parent: NCFlagWallBazar
+  id: N14FlagWallZetan
+  name: флаг зетанцев
+  description: Загадочные три круга.
+  components:
+  - type: Sprite
+    sprite: Corvax/Structures/Decoration/flag3.rsi
+    state: zetanmini

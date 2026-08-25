@@ -671,6 +671,7 @@
   components:
   - type: Sprite
     sprite: Corvax/Clothing/OuterClothing/PowerArmor/AlienPA.rsi
+    scale: 0.5, 0.5
   - type: Clothing
     sprite: Corvax/Clothing/OuterClothing/PowerArmor/AlienPA.rsi
   - type: ToggleableClothing

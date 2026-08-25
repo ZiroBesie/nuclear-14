@@ -1,7 +1,7 @@
 - type: species
   id: Zetan
   name: species-name-zetan
-  roundStart: true
+  roundStart: false
   prototype: N14MobZetan
   sprites: N14MobZetanSprites
   markingLimits: MobZetanMarkingLimits
