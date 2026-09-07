@@ -1,0 +1,340 @@
+- type: entity
+  parent: ClothingOuterHardsuitBase
+  id: N14ClothingOuterEXOstalker
+  name: костюм "Пустошь"
+  components:
+  - type: Appearance
+  - type: Sprite
+    sprite: Corvax/Clothing/OuterClothing/Armor/stalkerEXOarmor.rsi
+    layers:
+    - state: icon
+    scale: 1.2, 1.2
+  - type: Clothing
+    sprite: Corvax/Clothing/OuterClothing/Armor/stalkerEXOarmor.rsi
+    slots: [ outerClothing ]
+  - type: ToggleableClothing
+    clothingPrototype: N14ClothingHeadHelmetEXOstalker
+  - type: ClothingSpeedModifier
+    walkModifier: 0.8
+    sprintModifier: 0.8
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.65
+        Slash: 0.65
+        Piercing: 0.65
+        Heat: 0.65
+  - type: ExplosionResistance
+    damageCoefficient: 0.65
+  - type: StaminaDamageResistance
+    coefficient: 0.80
+  - type: EmitsSoundOnMove
+    soundCollection:
+      collection: N14FootstepPowerArmor
+      params:
+        volume: -6
+    requiresWorn: true
+    distanceWalking: 2
+    distanceSprinting: 3
+
+- type: entity
+  parent: ClothingHeadHardsuitBase
+  id: N14ClothingHeadHelmetEXOstalker
+  name: шлем костюма "Пустошь"
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Appearance
+  - type: Sprite
+    sprite: Corvax/Clothing/Head/Helmets/stalkerEXOhelmet.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.85
+        Slash: 0.85
+        Piercing: 0.85
+        Heat: 0.85
+  - type: ExplosionResistance
+    damageCoefficient: 0.90
+  - type: ComponentToggler
+    components:
+    - type: IdentityBlocker
+    - type: IngestionBlocker
+    - type: HideLayerClothing
+      slots:
+      - Hair
+      - Snout
+      - HeadTop
+      - HeadSide
+
+
+- type: entity
+  parent: ClothingOuterHardsuitBase
+  id: N14ClothingOuterEXOmerce
+  name: костюм "Наемник"
+  components:
+  - type: Appearance
+  - type: Sprite
+    sprite: Corvax/Clothing/OuterClothing/Armor/merceEXOarmor.rsi
+    layers:
+    - state: icon
+    scale: 1.2, 1.2
+  - type: Clothing
+    sprite: Corvax/Clothing/OuterClothing/Armor/merceEXOarmor.rsi
+    slots: [ outerClothing ]
+  - type: ToggleableClothing
+    clothingPrototype: N14ClothingHeadHelmetEXOmerce
+  - type: ClothingSpeedModifier
+    walkModifier: 0.8
+    sprintModifier: 0.8
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.65
+        Slash: 0.65
+        Piercing: 0.65
+        Heat: 0.65
+  - type: ExplosionResistance
+    damageCoefficient: 0.65
+  - type: StaminaDamageResistance
+    coefficient: 0.80
+  - type: EmitsSoundOnMove
+    soundCollection:
+      collection: N14FootstepPowerArmor
+      params:
+        volume: -6
+    requiresWorn: true
+    distanceWalking: 2
+    distanceSprinting: 3
+
+- type: entity
+  parent: ClothingHeadHardsuitBase
+  id: N14ClothingHeadHelmetEXOmerce
+  name: шлем костюма "Наемник"
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Appearance
+  - type: Sprite
+    sprite: Corvax/Clothing/Head/Helmets/merceEXOhelmet.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.85
+        Slash: 0.85
+        Piercing: 0.85
+        Heat: 0.85
+  - type: ExplosionResistance
+    damageCoefficient: 0.90
+  - type: ComponentToggler
+    components:
+    - type: IdentityBlocker
+    - type: IngestionBlocker
+    - type: HideLayerClothing
+      slots:
+      - Hair
+      - Snout
+      - HeadTop
+      - HeadSide
+
+- type: entity
+  parent: ClothingOuterHardsuitBase
+  id: N14ClothingOuterEXOmonolit
+  name: костюм "Рубин"
+  components:
+  - type: Appearance
+  - type: Sprite
+    sprite: Corvax/Clothing/OuterClothing/Armor/monolitEXOarmor.rsi
+    layers:
+    - state: icon
+    scale: 1.2, 1.2
+  - type: Clothing
+    sprite: Corvax/Clothing/OuterClothing/Armor/monolitEXOarmor.rsi
+    slots: [ outerClothing ]
+  - type: ToggleableClothing
+    clothingPrototype: N14ClothingHeadHelmetEXOmonolit
+  - type: ClothingSpeedModifier
+    walkModifier: 0.8
+    sprintModifier: 0.8
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.65
+        Slash: 0.65
+        Piercing: 0.65
+        Heat: 0.65
+  - type: ExplosionResistance
+    damageCoefficient: 0.65
+  - type: StaminaDamageResistance
+    coefficient: 0.80
+  - type: EmitsSoundOnMove
+    soundCollection:
+      collection: N14FootstepPowerArmor
+      params:
+        volume: -6
+    requiresWorn: true
+    distanceWalking: 2
+    distanceSprinting: 3
+
+- type: entity
+  parent: ClothingHeadHardsuitBase
+  id: N14ClothingHeadHelmetEXOmonolit
+  name: шлем костюма "Рубин"
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Appearance
+  - type: Sprite
+    sprite: Corvax/Clothing/Head/Helmets/monolitEXOhelmet.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.85
+        Slash: 0.85
+        Piercing: 0.85
+        Heat: 0.85
+  - type: ExplosionResistance
+    damageCoefficient: 0.90
+  - type: ComponentToggler
+    components:
+    - type: IdentityBlocker
+    - type: IngestionBlocker
+    - type: HideLayerClothing
+      slots:
+      - Hair
+      - Snout
+      - HeadTop
+      - HeadSide
+
+- type: entity
+  parent: ClothingOuterHardsuitBase
+  id: N14ClothingOuterEXOduty
+  name: костюм "Долг"
+  components:
+  - type: Appearance
+  - type: Sprite
+    sprite: Corvax/Clothing/OuterClothing/Armor/dutyEXOarmor.rsi
+    layers:
+    - state: icon
+    scale: 1.2, 1.2
+  - type: Clothing
+    sprite: Corvax/Clothing/OuterClothing/Armor/dutyEXOarmor.rsi
+    slots: [ outerClothing ]
+  - type: ToggleableClothing
+    clothingPrototype: N14ClothingHeadHelmetEXOduty
+  - type: ClothingSpeedModifier
+    walkModifier: 0.8
+    sprintModifier: 0.8
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.65
+        Slash: 0.65
+        Piercing: 0.65
+        Heat: 0.65
+  - type: ExplosionResistance
+    damageCoefficient: 0.65
+  - type: StaminaDamageResistance
+    coefficient: 0.80
+  - type: EmitsSoundOnMove
+    soundCollection:
+      collection: N14FootstepPowerArmor
+      params:
+        volume: -6
+    requiresWorn: true
+    distanceWalking: 2
+    distanceSprinting: 3
+
+- type: entity
+  parent: ClothingHeadHardsuitBase
+  id: N14ClothingHeadHelmetEXOduty
+  name: шлем костюма "Долг"
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Appearance
+  - type: Sprite
+    sprite: Corvax/Clothing/Head/Helmets/dutyEXOhelmet.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.85
+        Slash: 0.85
+        Piercing: 0.85
+        Heat: 0.85
+  - type: ExplosionResistance
+    damageCoefficient: 0.90
+  - type: ComponentToggler
+    components:
+    - type: IdentityBlocker
+    - type: IngestionBlocker
+    - type: HideLayerClothing
+      slots:
+      - Hair
+      - Snout
+      - HeadTop
+      - HeadSide
+
+- type: entity
+  parent: ClothingOuterHardsuitBase
+  id: N14ClothingOuterEXOfreedom
+  name: костюм "Воля"
+  components:
+  - type: Appearance
+  - type: Sprite
+    sprite: Corvax/Clothing/OuterClothing/Armor/freedomEXOarmor.rsi
+    layers:
+    - state: icon
+    scale: 1.2, 1.2
+  - type: Clothing
+    sprite: Corvax/Clothing/OuterClothing/Armor/freedomEXOarmor.rsi
+    slots: [ outerClothing ]
+  - type: ToggleableClothing
+    clothingPrototype: N14ClothingHeadHelmetEXOfreedom
+  - type: ClothingSpeedModifier
+    walkModifier: 0.8
+    sprintModifier: 0.8
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.65
+        Slash: 0.65
+        Piercing: 0.65
+        Heat: 0.65
+  - type: ExplosionResistance
+    damageCoefficient: 0.65
+  - type: StaminaDamageResistance
+    coefficient: 0.80
+  - type: EmitsSoundOnMove
+    soundCollection:
+      collection: N14FootstepPowerArmor
+      params:
+        volume: -6
+    requiresWorn: true
+    distanceWalking: 2
+    distanceSprinting: 3
+
+- type: entity
+  parent: ClothingHeadHardsuitBase
+  id: N14ClothingHeadHelmetEXOfreedom
+  name: шлем костюма "Воля"
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Appearance
+  - type: Sprite
+    sprite: Corvax/Clothing/Head/Helmets/freedomEXOhelmet.rsi
+  - type: Armor
+    coefficients:
+        Blunt: 0.85
+        Slash: 0.85
+        Piercing: 0.85
+        Heat: 0.85
+  - type: ExplosionResistance
+    damageCoefficient: 0.90
+  - type: ComponentToggler
+    components:
+    - type: IdentityBlocker
+    - type: IngestionBlocker
+    - type: HideLayerClothing
+      slots:
+      - Hair
+      - Snout
+      - HeadTop
+      - HeadSide
+
