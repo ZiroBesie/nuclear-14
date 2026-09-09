@@ -88,16 +88,6 @@ undecided-loadout-category-veteran-kebab-description =
     2 болы, 2 целебные парки, 1 гидра, 2 порошка берсерка,
     1 аптечка первой помощи полная, 1 рацион легионеров
 
-undecided-loadout-category-veteran-scout-name = Набор ветерана-лазутчика
-undecided-loadout-category-veteran-scout-description =
-    Ящик со всем необходимым для разведки и бесшумных стычек.
-    Содержит: 1 гладиус, 1 китайский автомат спецназа (9.39mm),
-    1 магазина (9.39mm), 1 коробку патронов (9.39mm),
-    2 дымовую гранату, 1 целебная парка, 1 гидра,
-    1 рулон бинтов, 1 рацион легионеров
-
-
-
 undecided-loadout-category-warrior-base-name = Обычный набор легионера-воина
 undecided-loadout-category-warrior-base-description =
     Ящик со всем необходимым для воина.
