@@ -9,7 +9,7 @@
   "states": [
     {
       "name": "base",
-      "directions": 4
+      "directions": 1
     }
   ]
 }
