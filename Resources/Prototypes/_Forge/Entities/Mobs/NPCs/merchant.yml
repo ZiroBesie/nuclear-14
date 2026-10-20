@@ -1,0 +1,53 @@
+# MARK: Торговец (merchant NPC)
+# Неподвижный NPC: клик по нему открывает окно торговли.
+
+- type: startingGear
+  id: N14MerchantGear
+  equipment:
+    jumpsuit: N14ClothingUniformJumpsuitMerchant
+    shoes: N14ClothingBootsCowboy
+    head: N14ClothingHeadHatCowboyBrown
+
+- type: entity
+  parent: N14MobHumanWastelander
+  id: N14MobHumanMerchant
+  name: Merchant
+  description: A wasteland trader ready to buy and sell goods for caps.
+  components:
+    - type: Icon
+      sprite: _Nuclear14/Markers/Jobs/wastelanders.rsi
+      state: wastelander
+    - type: RandomHumanoidAppearance
+      randomizeName: true
+    - type: Loadout
+      prototypes: [N14MerchantGear]
+    - type: NpcFactionMember
+      factions:
+      - CaravanCompany
+    # Неподвижность: статичное тело, игрок не может утащить/поднять/обыскать.
+    - type: Physics
+      bodyType: Static
+    - type: RemoveComponents
+      components:
+        - Strippable
+        - Pullable
+        - Carriable
+    # Бессмертие.
+    - type: Godmode
+    - type: N14Merchant
+      merchantName: Merchant
+      caps: 500
+      # Ассортимент (проверка предпросмотра спрайта).
+      stock:
+        - product: N14WeaponSniper45-70BrushGun
+          price: 90
+      # Покупка (торговец платит игроку).
+      wants:
+        - product: N14FoodShakerSalt
+          price: 5
+    - type: ActivatableUI
+      key: enum.N14MerchantUiKey.Key
+    - type: UserInterface
+      interfaces:
+        enum.N14MerchantUiKey.Key:
+          type: N14MerchantBoundUserInterface
