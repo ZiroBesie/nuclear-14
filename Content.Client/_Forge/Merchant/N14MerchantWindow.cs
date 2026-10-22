@@ -6,6 +6,8 @@ using Robust.Client.Graphics;
 using Robust.Client.ResourceManagement;
 using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
+using Robust.Client.UserInterface.RichText;
+using Robust.Shared.Utility;
 using static Robust.Client.UserInterface.Controls.BoxContainer;
 
 namespace Content.Client._Forge.Merchant;
@@ -28,6 +30,42 @@ public sealed class N14MerchantWindow : FancyWindow
     private readonly N14MerchantInfoBox _priceBox;
     private readonly N14MerchantInfoBox _ammoBox;
     private readonly Control _previewPanel;
+    private readonly BoxContainer _infoStack;
+    private readonly N14MerchantDescBox _descBox;
+    private readonly RichTextLabel _descLabel;
+    private readonly BoxContainer _itemData;
+    private readonly BoxContainer _columns;
+
+    /// <summary>Ширина одного info-бокса (цена / калибр).</summary>
+    private const float InfoBoxWidth = 150f;
+
+    /// <summary>Ширина блока описания = сумма ширин двух info-боксов.</summary>
+    private const float InfoWidth = InfoBoxWidth * 2f;
+
+    /// <summary>Отступ нижнего края блока описания от низа окна.</summary>
+    private const float ItemDataBottomGap = 40f;
+
+    /// <summary>Внутренний отступ блока описания (рамка).</summary>
+    private const float DescPadding = 4f;
+
+    /// <summary>Отступ текста описания от боковых сторон блока.</summary>
+    private const float DescTextInset = 10f;
+
+    /// <summary>Диапазон размера шрифта описания (авто-подгонка под высоту полосы).</summary>
+    private const int DescFontMax = 14;
+    private const int DescFontMin = 7;
+
+    /// <summary>Теги, разрешённые в описании (нужен font для авто-подгонки размера).</summary>
+    private static readonly Type[] DescTags =
+    {
+        typeof(FontTag),
+        typeof(ColorTag),
+        typeof(BoldTag),
+        typeof(ItalicTag),
+    };
+
+    /// <summary>Текущий текст описания (в markup-escape виде) для повторной укладки.</summary>
+    private string _descText = string.Empty;
 
     /// <summary>Состояния предметов по прототипу — для отображения info-боксов при наведении.</summary>
     private readonly Dictionary<string, N14MerchantItemState> _itemsByProto = new();
@@ -54,7 +92,7 @@ public sealed class N14MerchantWindow : FancyWindow
         _middle = new BoxContainer
         {
             Orientation = LayoutOrientation.Vertical,
-            MinWidth = 76,
+            MinWidth = 118,
             HorizontalAlignment = HAlignment.Center,
             VerticalAlignment = VAlignment.Center,
             Margin = new Thickness(4, 0),
@@ -69,6 +107,9 @@ public sealed class N14MerchantWindow : FancyWindow
         columns.AddChild(_playerColumn);
         columns.AddChild(_middle);
         columns.AddChild(_merchantColumn);
+        _columns = columns;
+        // Позиция/размер колонок меняются при пересборке строк — пересчитываем укладку описания.
+        _columns.OnResized += LayoutItemData;
 
         // Спрайт-предпросмотр: висит под нижним краем левой колонки, по центру её ширины.
         _preview = new TextureRect
@@ -82,21 +123,42 @@ public sealed class N14MerchantWindow : FancyWindow
             VerticalAlignment = VAlignment.Center,
         };
 
-        // Info-боксы справа от иконки: цена и калибр (патроны в магазине / у игрока).
-        var infoFont = _infoFont;
-        _priceBox = new N14MerchantInfoBox(string.Empty, infoFont) { MinWidth = 150f };
-        _ammoBox = new N14MerchantInfoBox(string.Empty, infoFont) { MinWidth = 150f };
+        // Info-боксы (аналог BM_ItemData в F:NV): цена и калибр (патроны в магазине / у игрока).
+        _priceBox = new N14MerchantInfoBox(string.Empty, _infoFont) { MinWidth = InfoBoxWidth };
+        _ammoBox = new N14MerchantInfoBox(string.Empty, _infoFont) { MinWidth = InfoBoxWidth };
 
-        var infoStack = new BoxContainer
+        _infoStack = new BoxContainer
         {
-            Orientation = LayoutOrientation.Vertical,
+            Orientation = LayoutOrientation.Horizontal,
+            HorizontalAlignment = HAlignment.Center,
             VerticalAlignment = VAlignment.Center,
-            Margin = new Thickness(6, 0, 0, 0),
+            MouseFilter = Control.MouseFilterMode.Ignore,
         };
-        infoStack.AddChild(_priceBox);
-        infoStack.AddChild(_ammoBox);
+        _infoStack.AddChild(_priceBox);
+        _infoStack.AddChild(_ammoBox);
 
-        // Панель = иконка + info-боксы; висит под нижним краем колонки, иконка по центру колонки.
+        // Большой блок описания предмета снизу окна: ширина = сумма ширин info-боксов.
+        _descLabel = new RichTextLabel
+        {
+            HorizontalAlignment = HAlignment.Left,
+            VerticalAlignment = VAlignment.Top,
+            // Отступ текста от левой рамки (чтобы не был в притык).
+            Margin = new Thickness(DescTextInset, 2, DescTextInset, 2),
+        };
+
+        _descBox = new N14MerchantDescBox
+        {
+            PanelOverride = new StyleBoxFlat
+            {
+                BackgroundColor = Color.Transparent,
+            },
+            Margin = new Thickness(4),
+            MinWidth = InfoWidth,
+            MaxWidth = InfoWidth,
+        };
+        _descBox.AddChild(_descLabel);
+
+        // Панель предпросмотра = только иконка; висит под нижним краем левой колонки, по её центру.
         var previewPanel = new BoxContainer
         {
             Orientation = LayoutOrientation.Horizontal,
@@ -104,15 +166,14 @@ public sealed class N14MerchantWindow : FancyWindow
             MouseFilter = Control.MouseFilterMode.Ignore,
         };
         previewPanel.AddChild(_preview);
-        previewPanel.AddChild(infoStack);
 
-        // Анкер к нижнему центру колонки: иконка (96) отцентрирована, боксы уходят вправо.
+        // Анкер к нижнему центру колонки: иконка (96) отцентрирована.
         LayoutContainer.SetAnchorLeft(previewPanel, 0.5f);
         LayoutContainer.SetAnchorRight(previewPanel, 0.5f);
         LayoutContainer.SetAnchorTop(previewPanel, 1f);
         LayoutContainer.SetAnchorBottom(previewPanel, 1f);
         LayoutContainer.SetMarginLeft(previewPanel, -48f);
-        LayoutContainer.SetMarginRight(previewPanel, 164f);
+        LayoutContainer.SetMarginRight(previewPanel, 48f);
         LayoutContainer.SetMarginTop(previewPanel, 18f);
         LayoutContainer.SetMarginBottom(previewPanel, 130f);
 
@@ -176,6 +237,31 @@ public sealed class N14MerchantWindow : FancyWindow
         layout.AddChild(backdrop);
         layout.AddChild(root);
 
+        // Низ окна: info-боксы (цена/калибр) — всегда на фиксированной высоте от низа,
+        // описание — над ними и никогда не поднимается выше нижней линии колонок.
+        var itemData = new BoxContainer
+        {
+            Orientation = LayoutOrientation.Vertical,
+            HorizontalAlignment = HAlignment.Center,
+            VerticalAlignment = VAlignment.Bottom,
+            Visible = false,
+            MouseFilter = Control.MouseFilterMode.Ignore,
+        };
+        _itemData = itemData;
+
+        itemData.AddChild(_descBox);
+        itemData.AddChild(_infoStack);
+
+        layout.AddChild(itemData);
+        LayoutContainer.SetAnchorLeft(itemData, 0.5f);
+        LayoutContainer.SetAnchorRight(itemData, 0.5f);
+        LayoutContainer.SetAnchorTop(itemData, 1f);
+        LayoutContainer.SetAnchorBottom(itemData, 1f);
+        LayoutContainer.SetMarginLeft(itemData, -InfoWidth / 2f);
+        LayoutContainer.SetMarginRight(itemData, InfoWidth / 2f);
+        LayoutContainer.SetMarginTop(itemData, -2000f);
+        LayoutContainer.SetMarginBottom(itemData, -ItemDataBottomGap);
+
         LayoutContainer.SetAnchorPreset(backdrop, LayoutContainer.LayoutPreset.Wide);
         LayoutContainer.SetAnchorPreset(root, LayoutContainer.LayoutPreset.Wide);
 
@@ -188,6 +274,77 @@ public sealed class N14MerchantWindow : FancyWindow
     ///     Окно жёстко закреплено по центру экрана — перетаскивание отключено.
     /// </summary>
     protected override DragMode GetDragModeFor(Vector2 relativeMousePos) => DragMode.None;
+
+    /// <summary>
+    ///     Держим блок описания в границах доступной полосы: info-боксы всегда на фиксированной
+    ///     высоте от низа, а описание над ними не поднимается выше нижней линии колонок.
+    /// </summary>
+    protected override void Resized()
+    {
+        base.Resized();
+        LayoutItemData();
+    }
+
+    /// <summary>
+    ///     Подгоняет размер шрифта описания так, чтобы весь текст помещался в полосу
+    ///     между нижней линией колонок и info-боксами, не сдвигая последние.
+    /// </summary>
+    private void LayoutItemData()
+    {
+        if (_itemData == null || _descLabel == null)
+            return;
+
+        // Нижний край полосы описания = верх info-боксов; верх полосы = низ колонок.
+        var itemDataBottom = GlobalPosition.Y + Size.Y - ItemDataBottomGap;
+        var descriptionBottom = itemDataBottom - N14MerchantInfoBox.RowHeight;
+        var columnsBottom = _columns.GlobalPosition.Y + _columns.Size.Y;
+
+        // Доступная высота под описание (может быть отрицательной — тогда текст не влезает вовсе).
+        var available = MathF.Max(0f, descriptionBottom - columnsBottom);
+
+        FitDescriptionFont(available);
+    }
+
+    /// <summary>
+    ///     Подбирает максимальный размер шрифта (от <see cref="DescFontMax"/> к <see cref="DescFontMin"/>),
+    ///     при котором описание умещается по высоте в <paramref name="available"/> пикселей.
+    /// </summary>
+    private void FitDescriptionFont(float available)
+    {
+        if (string.IsNullOrEmpty(_descText))
+        {
+            _descBox.Visible = false;
+            return;
+        }
+
+        _descBox.Visible = true;
+
+        // Внутренняя ширина блока (минус рамка/паддинг и отступы текста).
+        var innerWidth = InfoWidth - DescPadding * 2f - DescTextInset * 2f;
+
+        for (var size = DescFontMax; size >= DescFontMin; size--)
+        {
+            _descLabel.SetMessage(DescMessage(size), DescTags, N14MerchantTheme.Accent);
+            _descLabel.Measure(new Vector2(innerWidth, float.PositiveInfinity));
+
+            if (_descLabel.DesiredSize.Y <= available)
+            {
+                _descBox.MaxHeight = float.PositiveInfinity;
+                return;
+            }
+        }
+
+        // Даже минимальный размер не влез — оставляем минимальный и ограничиваем высоту блока.
+        _descLabel.SetMessage(DescMessage(DescFontMin), DescTags, N14MerchantTheme.Accent);
+        _descLabel.Measure(new Vector2(innerWidth, float.PositiveInfinity));
+        _descBox.MaxHeight = available;
+    }
+
+    /// <summary>Описание, обёрнутое в тег размера шрифта (для авто-подгонки).</summary>
+    private FormattedMessage DescMessage(int size)
+    {
+        return FormattedMessage.FromMarkupPermissive($"[font size={size}]{_descText}[/font]");
+    }
 
     /// <summary>
     ///     Убираем стандартную шапку окна (заголовок, крестик), разделитель под ней
@@ -230,6 +387,9 @@ public sealed class N14MerchantWindow : FancyWindow
 
         // Пересобираем строки, сохраняя выбор по прототипу/индексу.
         _previewPanel.Visible = false;
+        _itemData.Visible = false;
+        _descText = string.Empty;
+        _descBox.MaxHeight = float.PositiveInfinity;
         _itemsByProto.Clear();
         foreach (var item in state.Requests)
             _itemsByProto.TryAdd(item.Proto, item);
@@ -292,6 +452,7 @@ public sealed class N14MerchantWindow : FancyWindow
         if (proto == null || !_itemsByProto.TryGetValue(proto, out var item))
         {
             _previewPanel.Visible = false;
+            _itemData.Visible = false;
             return;
         }
 
@@ -312,9 +473,25 @@ public sealed class N14MerchantWindow : FancyWindow
             _ammoBox.Visible = false;
         }
 
-        // Панель (картинка + боксы) видна только для оружия с данными о калибре.
-        _previewPanel.Visible = _ammoBox.Visible;
+        // Большой блок с описанием предмета: текст масштабируется, чтобы не сдвигать info-боксы.
+        _descText = EscapeMarkup(item.Description);
+
+        // Иконка и item data видны только для оружия с данными о калибре.
+        var isWeapon = _ammoBox.Visible;
+        _previewPanel.Visible = isWeapon;
+        _itemData.Visible = isWeapon;
+
+        if (isWeapon)
+            LayoutItemData();
+        else
+            _descBox.Visible = false;
     }
+
+    /// <summary>
+    ///     Экранирует служебные для markup-разметки символы, чтобы описание рендерилось как текст.
+    /// </summary>
+    private static string EscapeMarkup(string text)
+        => text.Replace("[", "[lb]");
 
     /// <summary>
     ///     Первый кадр состояния <c>medved</c> из RSI с иконками оружия (или null, если не нашли).

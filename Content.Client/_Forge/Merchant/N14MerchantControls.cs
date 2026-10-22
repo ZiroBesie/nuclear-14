@@ -588,14 +588,36 @@ public sealed class N14MerchantRow : PanelContainer
 }
 
 /// <summary>
+///     Рисует «половинную» рамку в стиле границ колонок: верхняя грань с загнутыми углами
+///     и боковые вертикали только до половины высоты. Нижняя грань и нижние половины боковин убраны.
+/// </summary>
+public static class N14MerchantFrameDraw
+{
+    public const float Tick = 5f;
+
+    public static void DrawHalfFrame(DrawingHandleScreen handle, Vector2 size, Color color)
+    {
+        if (size.X <= 0 || size.Y <= 0)
+            return;
+
+        // Боковые вертикали — только верхняя половина.
+        var sideBottom = size.Y / 2f;
+        handle.DrawLine(new Vector2(1f, Tick), new Vector2(1f, sideBottom), color);
+        handle.DrawLine(new Vector2(size.X - 1f, Tick), new Vector2(size.X - 1f, sideBottom), color);
+
+        // Верхняя грань с загнутыми углами вниз.
+        handle.DrawLine(new Vector2(1f, 1f), new Vector2(size.X - 1f, 1f), color);
+        handle.DrawLine(new Vector2(1f, 1f), new Vector2(1f, Tick), color);
+        handle.DrawLine(new Vector2(size.X - 1f, 1f), new Vector2(size.X - 1f, Tick), color);
+    }
+}
+
+/// <summary>
 ///     Маленький прямоугольный бокс-info под иконкой предпросмотра: рамка в стиле границ колонок
 ///     (боковые линии + загнутые углы) и подпись внутри. Используется для прочности/цены/калибра.
 /// </summary>
 public sealed class N14MerchantInfoBox : Control
 {
-    private const float Tick = 5f;
-    private const float Pad = 6f;
-
     private readonly Label _label;
 
     public Color LineColor { get; set; } = N14MerchantTheme.Accent;
@@ -626,25 +648,26 @@ public sealed class N14MerchantInfoBox : Control
     protected override void Draw(DrawingHandleScreen handle)
     {
         base.Draw(handle);
+        N14MerchantFrameDraw.DrawHalfFrame(handle, PixelSize, LineColor);
+    }
+}
 
-        var size = PixelSize;
-        if (size.X <= 0 || size.Y <= 0)
-            return;
+/// <summary>
+///     Блок описания предмета: контейнер с «половинной» рамкой (верхняя грань + половина боковин),
+///     в стиле info-боксов. Содержит RichTextLabel с автопереносом.
+/// </summary>
+public sealed class N14MerchantDescBox : PanelContainer
+{
+    public Color LineColor { get; set; } = N14MerchantTheme.Accent;
 
-        var color = LineColor;
+    public N14MerchantDescBox()
+    {
+        MouseFilter = Control.MouseFilterMode.Ignore;
+    }
 
-        // Боковые вертикали.
-        handle.DrawLine(new Vector2(1f, Tick), new Vector2(1f, size.Y - Tick), color);
-        handle.DrawLine(new Vector2(size.X - 1f, Tick), new Vector2(size.X - 1f, size.Y - Tick), color);
-
-        // Верхняя грань с загнутыми углами вниз.
-        handle.DrawLine(new Vector2(1f, 1f), new Vector2(size.X - 1f, 1f), color);
-        handle.DrawLine(new Vector2(1f, 1f), new Vector2(1f, Tick), color);
-        handle.DrawLine(new Vector2(size.X - 1f, 1f), new Vector2(size.X - 1f, Tick), color);
-
-        // Нижняя грань с загнутыми углами вверх.
-        handle.DrawLine(new Vector2(1f, size.Y - 1f), new Vector2(size.X - 1f, size.Y - 1f), color);
-        handle.DrawLine(new Vector2(1f, size.Y - 1f), new Vector2(1f, size.Y - Tick), color);
-        handle.DrawLine(new Vector2(size.X - 1f, size.Y - 1f), new Vector2(size.X - 1f, size.Y - Tick), color);
+    protected override void Draw(DrawingHandleScreen handle)
+    {
+        base.Draw(handle);
+        N14MerchantFrameDraw.DrawHalfFrame(handle, PixelSize, LineColor);
     }
 }

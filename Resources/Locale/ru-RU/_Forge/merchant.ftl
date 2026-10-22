@@ -2,6 +2,7 @@ n14-merchant-window-title = Торговля
 n14-merchant-column-items = Вещи
 n14-merchant-column-npc = NPC
 n14-merchant-caps = Крышки: {$caps}
+n14-merchant-caps-word = Caps
 n14-merchant-accept = Accept
 n14-merchant-exit = Exit
 

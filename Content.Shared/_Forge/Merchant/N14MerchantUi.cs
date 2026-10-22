@@ -66,6 +66,9 @@ public sealed class N14MerchantItemState
 
     /// <summary>Rounds of that caliber in the player's inventory (outside the magazine).</summary>
     public int AmmoInBag;
+
+    /// <summary>Item description shown in the bottom info block.</summary>
+    public string Description = string.Empty;
 }
 
 /// <summary>

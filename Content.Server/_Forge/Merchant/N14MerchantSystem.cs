@@ -32,6 +32,9 @@ public sealed partial class N14MerchantSystem : EntitySystem
 
     private const string CapsStackId = "Caps";
 
+    /// <summary>Тег внутреннего магазина/спидлоадера: считается частью оружия, не отдельной вещью.</summary>
+    private static readonly ProtoId<TagPrototype> SpeedLoaderInternalTag = "SpeedLoaderInternal";
+
     /// <summary>Наценка торговца на купленные у игрока вещи (25%).</summary>
     private const double MerchantMarkup = 1.25;
 
@@ -151,6 +154,7 @@ public sealed partial class N14MerchantSystem : EntitySystem
                 Index = i,
                 Proto = listing.Product.Id,
                 Name = proto.Name,
+                Description = proto.Description,
                 Price = GetPrice(listing.Product.Id, listing.Price),
                 Count = listing.Remaining,
             };
@@ -180,6 +184,9 @@ public sealed partial class N14MerchantSystem : EntitySystem
         var order = new List<string>();
         var samples = new Dictionary<string, EntityUid>();
 
+        // Сущности, вставленные в магазин оружия (спидлоадеры/магазины) — часть оружия, не отдельные вещи.
+        var insertedMags = CollectInsertedMagazines(actor);
+
         foreach (var ent in EnumerateInventory(actor))
         {
             if (!TryGetProtoId(ent, out var id))
@@ -187,6 +194,10 @@ public sealed partial class N14MerchantSystem : EntitySystem
 
             // Капсы — это валюта, в списке предметов их не показываем.
             if (TryComp<StackComponent>(ent, out var stack) && stack.StackTypeId == CapsStackId)
+                continue;
+
+            // Внутренний магазин/спидлоадер считается частью оружия, а не отдельной вещью.
+            if (_tag.HasTag(ent, SpeedLoaderInternalTag) || insertedMags.Contains(ent))
                 continue;
 
             if (owned.TryAdd(id, 1))
@@ -212,6 +223,7 @@ public sealed partial class N14MerchantSystem : EntitySystem
                 Id = "r" + i,
                 Proto = id,
                 Name = proto.Name,
+                Description = proto.Description,
                 Price = GetPrice(id, prices.GetValueOrDefault(id)),
                 Count = owned[id],
             };
@@ -279,11 +291,57 @@ public sealed partial class N14MerchantSystem : EntitySystem
             : ballistic.Capacity; // новый товар при спавне полон
 
         var tags = GetCaliberTags(ballistic);
+
+        // Если у самого оружия калиберных тегов нет (оно работает только через вставленный
+        // магазин), берём калибр из вставленного внутреннего магазина/спидлоадера.
+        if ((tags == null || !HasCaliberTag(tags)) && entity != null)
+            tags = GetInsertedMagazineCaliberTags(entity.Value) ?? tags;
+
         if (tags == null || tags.Count == 0)
             return;
 
         item.Caliber = FormatCaliber(tags[0].Id);
         item.AmmoInBag = CountAmmoInInventory(actor, tags, entity);
+    }
+
+    /// <summary>Есть ли среди переданных тегов хотя бы один калиберный (N14Cartridge*/N14Shell*).</summary>
+    private static bool HasCaliberTag(List<ProtoId<TagPrototype>> tags)
+    {
+        foreach (var tag in tags)
+        {
+            if (IsCaliberTag(tag.Id))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsCaliberTag(string id)
+        => id.StartsWith("N14Cartridge", StringComparison.Ordinal) ||
+           id.StartsWith("N14Shell", StringComparison.Ordinal);
+
+    /// <summary>
+    ///     Калиберные теги вставленного в оружие внутреннего магазина/спидлоадера (если есть).
+    /// </summary>
+    private List<ProtoId<TagPrototype>>? GetInsertedMagazineCaliberTags(EntityUid weapon)
+    {
+        if (!TryComp<ContainerManagerComponent>(weapon, out var manager))
+            return null;
+
+        foreach (var container in manager.Containers.Values)
+        {
+            foreach (var ent in container.ContainedEntities)
+            {
+                if (!TryComp<BallisticAmmoProviderComponent>(ent, out var mag))
+                    continue;
+
+                var tags = GetCaliberTags(mag);
+                if (tags != null && HasCaliberTag(tags))
+                    return tags;
+            }
+        }
+
+        return null;
     }
 
     /// <summary>
@@ -299,15 +357,11 @@ public sealed partial class N14MerchantSystem : EntitySystem
 
         foreach (var tag in all)
         {
-            var id = tag.Id;
-            if (id.StartsWith("N14Cartridge", StringComparison.Ordinal) ||
-                id.StartsWith("N14Shell", StringComparison.Ordinal))
-            {
+            if (IsCaliberTag(tag.Id))
                 result.Add(tag);
-            }
         }
 
-        return result.Count > 0 ? result : all;
+        return result.Count > 0 ? result : null;
     }
 
     /// <summary>
@@ -497,6 +551,30 @@ public sealed partial class N14MerchantSystem : EntitySystem
     #endregion
 
     #region Инвентарь
+
+    /// <summary>
+    ///     Сущности, вставленные в контейнер боеприпасов любого предмета инвентаря игрока
+    ///     (спидлоадеры/магазины). Считаются частью оружия и не показываются отдельными строками.
+    /// </summary>
+    private HashSet<EntityUid> CollectInsertedMagazines(EntityUid actor)
+    {
+        var result = new HashSet<EntityUid>();
+
+        foreach (var ent in EnumerateInventory(actor))
+        {
+            if (!TryComp<BallisticAmmoProviderComponent>(ent, out var ballistic))
+                continue;
+
+            foreach (var contained in ballistic.Container.ContainedEntities)
+            {
+                // Только магазины/спидлоадеры (у них есть свой провайдер), патроны не трогаем.
+                if (TryComp<BallisticAmmoProviderComponent>(contained, out _))
+                    result.Add(contained);
+            }
+        }
+
+        return result;
+    }
 
     private List<EntityUid> EnumerateInventory(EntityUid uid)
     {

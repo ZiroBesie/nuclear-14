@@ -2,6 +2,7 @@ n14-merchant-window-title = Trade
 n14-merchant-column-items = Items
 n14-merchant-column-npc = NPC
 n14-merchant-caps = Caps: {$caps}
+n14-merchant-caps-word = Caps
 n14-merchant-accept = Accept
 n14-merchant-exit = Exit
 
