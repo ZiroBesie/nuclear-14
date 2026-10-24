@@ -14,6 +14,7 @@ using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Utility;
 
 namespace Content.Server._Forge.Merchant;
 
@@ -37,6 +38,10 @@ public sealed partial class N14MerchantSystem : EntitySystem
 
     /// <summary>Наценка торговца на купленные у игрока вещи (25%).</summary>
     private const double MerchantMarkup = 1.25;
+
+    /// <summary>Прототипы-списки цен и иконок (задаются в YAML).</summary>
+    private static readonly ProtoId<N14MerchantPricePrototype> PriceListId = "N14MerchantPrices";
+    private static readonly ProtoId<N14MerchantIconPrototype> IconListId = "N14MerchantIcons";
 
     private static readonly SoundSpecifier BuySound = new SoundPathSpecifier("/Audio/Effects/kaching.ogg");
 
@@ -196,6 +201,10 @@ public sealed partial class N14MerchantSystem : EntitySystem
             if (TryComp<StackComponent>(ent, out var stack) && stack.StackTypeId == CapsStackId)
                 continue;
 
+            // Патроны и магазины в продаже не показываем (id содержит Cartridge/Magazine).
+            if (IsAmmoOrMagazine(id))
+                continue;
+
             // Внутренний магазин/спидлоадер считается частью оружия, а не отдельной вещью.
             if (_tag.HasTag(ent, SpeedLoaderInternalTag) || insertedMags.Contains(ent))
                 continue;
@@ -242,13 +251,22 @@ public sealed partial class N14MerchantSystem : EntitySystem
     }
 
     /// <summary>
-    ///     Цена вещи: явная цена из конфига (если задана), иначе StaticPrice у прототипа.
+    ///     Цена вещи: цена из YAML-списка цен -> явная цена из конфига -> StaticPrice у прототипа.
     /// </summary>
     private int GetPrice(string protoId, int configured)
     {
+        // 1. Список цен из YAML (наивысший приоритет).
+        if (_prototype.TryIndex(PriceListId, out var priceList) &&
+            priceList.Prices.TryGetValue(protoId, out var listed))
+        {
+            return listed;
+        }
+
+        // 2. Явная цена из конфига торговца.
         if (configured > 0)
             return configured;
 
+        // 3. StaticPrice у прототипа.
         if (_prototype.TryIndex<EntityPrototype>(protoId, out var proto) &&
             proto.TryGetComponent<StaticPriceComponent>(out var staticPrice))
         {
@@ -258,12 +276,24 @@ public sealed partial class N14MerchantSystem : EntitySystem
         return 0;
     }
 
+    /// <summary>Путь к RSI-иконке предпросмотра для прототипа (или дефолт).</summary>
+    private ResPath GetIconPath(string protoId)
+    {
+        if (_prototype.TryIndex(IconListId, out var iconList))
+            return iconList.GetIcon(protoId);
+
+        return N14MerchantIconPrototype.DefaultIcon;
+    }
+
     /// <summary>
     ///     Заполняет данные об оружии для строки UI: прочность, калибр, патроны в магазине и у игрока.
     /// </summary>
     /// <param name="entity">Заспавненная сущность (для вещей игрока) или null (товар торговца из прототипа).</param>
     private void FillWeaponInfo(N14MerchantItemState item, EntityPrototype proto, EntityUid? entity, EntityUid actor)
     {
+        // Иконка предпросмотра из YAML-списка (или дефолт).
+        item.IconPath = GetIconPath(proto.ID).ToString();
+
         // Прочность.
         if (entity != null && TryComp<GunConditionComponent>(entity, out var cond) && cond.MaxCondition > 0)
         {
@@ -319,6 +349,11 @@ public sealed partial class N14MerchantSystem : EntitySystem
     private static bool IsCaliberTag(string id)
         => id.StartsWith("N14Cartridge", StringComparison.Ordinal) ||
            id.StartsWith("N14Shell", StringComparison.Ordinal);
+
+    /// <summary>Патрон или магазин по id прототипа (содержит Cartridge/Magazine) — не продаётся.</summary>
+    private static bool IsAmmoOrMagazine(string protoId)
+        => protoId.Contains("Cartridge", StringComparison.OrdinalIgnoreCase) ||
+           protoId.Contains("Magazine", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     ///     Калиберные теги вставленного в оружие внутреннего магазина/спидлоадера (если есть).

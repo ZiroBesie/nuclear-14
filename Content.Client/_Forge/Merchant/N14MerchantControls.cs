@@ -234,17 +234,17 @@ public sealed class N14MerchantTriangle : Control
 
 /// <summary>
 ///     Нарисованная стрелка перевода (вместо текстовых символов ⇨/⇦).
-///     Состоит из древка-прямоугольника и треугольного наконечника.
+///     Контур стрелки: древко-прямоугольник и треугольный наконечник (только обводка).
 /// </summary>
 public sealed class N14MerchantArrow : Control
 {
-    private const float DefaultWidth = 24f;
-    private const float DefaultHeight = 15f;
+    private const float DefaultWidth = 96f;
+    private const float DefaultHeight = 60f;
 
     /// <summary>true — стрелка смотрит вправо, false — влево.</summary>
     public bool PointRight { get; }
 
-    public Color Fill { get; set; } = N14MerchantTheme.Accent;
+    public Color LineColor { get; set; } = N14MerchantTheme.Accent;
 
     public N14MerchantArrow(bool pointRight)
     {
@@ -262,37 +262,79 @@ public sealed class N14MerchantArrow : Control
         if (size.X <= 0 || size.Y <= 0)
             return;
 
-        var fill = Fill;
+        var color = LineColor;
+
+        // Геометрия стрелки: наконечник занимает половину ширины, древко — центр по высоте.
         var headWidth = size.X * 0.5f;
         var shaftHeight = size.Y * 0.34f;
         var shaftTop = (size.Y - shaftHeight) / 2f;
+        var shaftBottom = shaftTop + shaftHeight;
 
         if (PointRight)
         {
-            handle.DrawRect(
-                new UIBox2(0f, shaftTop, size.X - headWidth * 0.5f, shaftTop + shaftHeight), fill);
+            var neckX = size.X - headWidth;
 
-            var head = new List<Vector2>
-            {
-                new(size.X - headWidth, 0f),
-                new(size.X, size.Y / 2f),
-                new(size.X - headWidth, size.Y),
-            };
-            handle.DrawPrimitives(DrawPrimitiveTopology.TriangleList, head, fill);
+            // Древко (верх/низ).
+            handle.DrawLine(new Vector2(0f, shaftTop), new Vector2(neckX, shaftTop), color);
+            handle.DrawLine(new Vector2(0f, shaftBottom), new Vector2(neckX, shaftBottom), color);
+            // Задний торец древка.
+            handle.DrawLine(new Vector2(0f, shaftTop), new Vector2(0f, shaftBottom), color);
+            // Наконечник.
+            handle.DrawLine(new Vector2(neckX, 0f), new Vector2(size.X, size.Y / 2f), color);
+            handle.DrawLine(new Vector2(size.X, size.Y / 2f), new Vector2(neckX, size.Y), color);
+            // Вертикальная перекладина наконечника.
+            handle.DrawLine(new Vector2(neckX, 0f), new Vector2(neckX, shaftTop), color);
+            handle.DrawLine(new Vector2(neckX, shaftBottom), new Vector2(neckX, size.Y), color);
         }
         else
         {
-            handle.DrawRect(
-                new UIBox2(headWidth * 0.5f, shaftTop, size.X, shaftTop + shaftHeight), fill);
+            var neckX = headWidth;
 
-            var head = new List<Vector2>
-            {
-                new(headWidth, size.Y),
-                new(0f, size.Y / 2f),
-                new(headWidth, 0f),
-            };
-            handle.DrawPrimitives(DrawPrimitiveTopology.TriangleList, head, fill);
+            // Древко (верх/низ).
+            handle.DrawLine(new Vector2(size.X, shaftTop), new Vector2(neckX, shaftTop), color);
+            handle.DrawLine(new Vector2(size.X, shaftBottom), new Vector2(neckX, shaftBottom), color);
+            // Задний торец древка.
+            handle.DrawLine(new Vector2(size.X, shaftTop), new Vector2(size.X, shaftBottom), color);
+            // Наконечник.
+            handle.DrawLine(new Vector2(neckX, 0f), new Vector2(0f, size.Y / 2f), color);
+            handle.DrawLine(new Vector2(0f, size.Y / 2f), new Vector2(neckX, size.Y), color);
+            // Вертикальная перекладина наконечника.
+            handle.DrawLine(new Vector2(neckX, 0f), new Vector2(neckX, shaftTop), color);
+            handle.DrawLine(new Vector2(neckX, shaftBottom), new Vector2(neckX, size.Y), color);
         }
+    }
+}
+
+/// <summary>
+///     Маркер выбора строки: небольшой квадратик слева от названия предмета.
+///     По длине чуть меньше блока с названием (высота строки).
+/// </summary>
+public sealed class N14MerchantSelectMark : Control
+{
+    private const float MarkSize = 14f;
+
+    /// <summary>Отступ с боков маркера (слева от строки и справа от маркера).</summary>
+    public const float MarkSideInset = 6f;
+
+    public Color Color { get; set; } = N14MerchantTheme.Accent;
+
+    public N14MerchantSelectMark()
+    {
+        MinSize = new Vector2(MarkSize, MarkSize);
+        MaxSize = new Vector2(MarkSize, MarkSize);
+        MouseFilter = Control.MouseFilterMode.Ignore;
+    }
+
+    protected override void Draw(DrawingHandleScreen handle)
+    {
+        base.Draw(handle);
+
+        var size = PixelSize;
+        if (size.X <= 0 || size.Y <= 0)
+            return;
+
+        // Полностью залитый янтарный квадрат (не контур).
+        handle.DrawRect(new UIBox2(0f, 0f, size.X, size.Y), Color, true);
     }
 }
 
@@ -420,7 +462,6 @@ public sealed class N14MerchantColumn : LayoutContainer
 public sealed class N14MerchantRow : PanelContainer
 {
     private static readonly Thickness NoMargin = new(4, 2, 4, 2);
-    private static readonly Thickness SelMargin = new(2, 1, 2, 1);
 
     /// <summary>Путь к звуку наведения курсора на строку.</summary>
     private const string HoverSoundPath = "/Audio/_Forge/UserInterface/ui_menu_focus.wav";
@@ -437,6 +478,7 @@ public sealed class N14MerchantRow : PanelContainer
 
     private readonly Label _name;
     private readonly Label _price;
+    private readonly Control _mark;
 
     public string Proto { get; }
 
@@ -491,12 +533,20 @@ public sealed class N14MerchantRow : PanelContainer
 
         _name = new Label
         {
-            Text = count > 0 ? $"{name} x{count}" : name,
+            Text = count > 1 ? $"{name} ({count})" : name,
             FontOverride = font,
             FontColorOverride = N14MerchantTheme.Accent,
             HorizontalAlignment = HAlignment.Left,
             VerticalAlignment = VAlignment.Center,
             HorizontalExpand = true,
+        };
+
+        // Квадратик слева от названия — маркер выбора (виден только когда строка выбрана).
+        _mark = new N14MerchantSelectMark
+        {
+            VerticalAlignment = VAlignment.Center,
+            Visible = false,
+            Margin = new Thickness(N14MerchantSelectMark.MarkSideInset, 0, N14MerchantSelectMark.MarkSideInset, 0),
         };
 
         // У колонки торговца цена со знаком плюс, у колонки игрока — просто число.
@@ -514,6 +564,7 @@ public sealed class N14MerchantRow : PanelContainer
         {
             Orientation = LayoutOrientation.Horizontal,
         };
+        inner.AddChild(_mark);
         inner.AddChild(_name);
         inner.AddChild(_price);
 
@@ -550,14 +601,8 @@ public sealed class N14MerchantRow : PanelContainer
 
     private void ApplyStyle()
     {
-        if (_selected)
-        {
-            PanelOverride = new StyleBoxFlat { BackgroundColor = N14MerchantTheme.Accent };
-            Margin = SelMargin;
-            _name.FontColorOverride = N14MerchantTheme.Ui;
-            _price.FontColorOverride = N14MerchantTheme.Ui;
-            return;
-        }
+        // Выбор показывается маркером слева от названия, а не заливкой всей строки.
+        _mark.Visible = _selected;
 
         Margin = NoMargin;
         _name.FontColorOverride = N14MerchantTheme.Accent;

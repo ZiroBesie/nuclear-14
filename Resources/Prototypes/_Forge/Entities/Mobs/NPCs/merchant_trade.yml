@@ -1,0 +1,14 @@
+# MARK: Торговец — цены и иконки предпросмотра
+# Список цен: переопределяет StaticPrice прототипа.
+# Список иконок: прототип сущности -> путь к RSI. Для сущностей без записи — iconsother/musor.rsi.
+
+- type: n14MerchantPrice
+  id: N14MerchantPrices
+  prices:
+    N14WeaponSniper45-70BrushGun: 90
+    N14FoodShakerSalt: 5
+
+- type: n14MerchantIcon
+  id: N14MerchantIcons
+  icons:
+    N14WeaponSniper45-70BrushGun: /Textures/_NukeWake/icons/iconsguns/medved.rsi

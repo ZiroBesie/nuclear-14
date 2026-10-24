@@ -20,8 +20,11 @@ public sealed class N14MerchantWindow : FancyWindow
     public event Action? OnAccept;
     public event Action? OnExit;
 
-    private const string PreviewRsiPath = "/Textures/_NukeWake/icons/iconsguns.rsi";
-    private const string PreviewStateId = "medved";
+    /// <summary>Дефолтная иконка предпросмотра для сущностей без явного пути в списке иконок.</summary>
+    private const string DefaultPreviewRsiPath = "/Textures/_NukeWake/icons/iconsother/musor.rsi";
+
+    /// <summary>Кэш текстур предпросмотра по пути к RSI.</summary>
+    private static readonly Dictionary<string, Texture?> PreviewCache = new();
 
     private readonly N14MerchantColumn _playerColumn;
     private readonly N14MerchantColumn _merchantColumn;
@@ -103,7 +106,12 @@ public sealed class N14MerchantWindow : FancyWindow
             Orientation = LayoutOrientation.Horizontal,
             HorizontalAlignment = HAlignment.Center,
             VerticalAlignment = VAlignment.Center,
+            // Слегка тянем блок колонок вверх.
+            Margin = new Thickness(0, -32, 0, 0),
         };
+        // Левую колонку тянем влево, правую — вправо.
+        _playerColumn.Margin = new Thickness(-20, 0, 0, 0);
+        _merchantColumn.Margin = new Thickness(0, 0, -20, 0);
         columns.AddChild(_playerColumn);
         columns.AddChild(_middle);
         columns.AddChild(_merchantColumn);
@@ -114,7 +122,7 @@ public sealed class N14MerchantWindow : FancyWindow
         // Спрайт-предпросмотр: висит под нижним краем левой колонки, по центру её ширины.
         _preview = new TextureRect
         {
-            Texture = LoadPreviewTexture(),
+            Texture = LoadPreviewTexture(null),
             Modulate = N14MerchantTheme.Accent,
             MinSize = new Vector2(96f, 112f),
             MaxSize = new Vector2(96f, 112f),
@@ -188,6 +196,7 @@ public sealed class N14MerchantWindow : FancyWindow
         };
         accept.Label.FontOverride = _font;
         accept.Label.FontColorOverride = N14MerchantTheme.Accent;
+        ApplyButtonStyle(accept);
         accept.OnPressed += _ => OnAccept?.Invoke();
 
         var exit = new Button
@@ -198,6 +207,7 @@ public sealed class N14MerchantWindow : FancyWindow
         };
         exit.Label.FontOverride = _font;
         exit.Label.FontColorOverride = N14MerchantTheme.Accent;
+        ApplyButtonStyle(exit);
         exit.OnPressed += _ =>
         {
             OnExit?.Invoke();
@@ -456,10 +466,11 @@ public sealed class N14MerchantWindow : FancyWindow
             return;
         }
 
-        // Цена.
+        // Цена — есть у любого предмета.
         _priceBox.SetText(Loc.GetString("n14-merchant-info-price", ("price", item.Price)));
+        _priceBox.Visible = true;
 
-        // Калибр и патроны — только если есть калибр.
+        // Калибр и патроны — только если есть калибр (оружие).
         if (!string.IsNullOrEmpty(item.Caliber))
         {
             _ammoBox.SetText(Loc.GetString("n14-merchant-info-ammo",
@@ -476,15 +487,13 @@ public sealed class N14MerchantWindow : FancyWindow
         // Большой блок с описанием предмета: текст масштабируется, чтобы не сдвигать info-боксы.
         _descText = EscapeMarkup(item.Description);
 
-        // Иконка и item data видны только для оружия с данными о калибре.
-        var isWeapon = _ammoBox.Visible;
-        _previewPanel.Visible = isWeapon;
-        _itemData.Visible = isWeapon;
+        // Иконка, описание и info-боксы показываются для любого предмета.
+        _previewPanel.Visible = true;
+        _itemData.Visible = true;
 
-        if (isWeapon)
-            LayoutItemData();
-        else
-            _descBox.Visible = false;
+        // Иконка из YAML-списка (или дефолт iconsother.rsi).
+        _preview.Texture = LoadPreviewTexture(item.IconPath);
+        LayoutItemData();
     }
 
     /// <summary>
@@ -494,19 +503,37 @@ public sealed class N14MerchantWindow : FancyWindow
         => text.Replace("[", "[lb]");
 
     /// <summary>
-    ///     Первый кадр состояния <c>medved</c> из RSI с иконками оружия (или null, если не нашли).
+    ///     Первый кадр первого состояния RSI с иконкой предпросмотра (или null, если не нашли).
     /// </summary>
-    private static Texture? LoadPreviewTexture()
+    private static Texture? LoadPreviewTexture(string? rsiPath)
+    {
+        var path = string.IsNullOrEmpty(rsiPath) ? DefaultPreviewRsiPath : rsiPath;
+
+        if (PreviewCache.TryGetValue(path, out var cached))
+            return cached;
+
+        var texture = TryLoadRsiFirstFrame(path);
+
+        // Путь из списка мог быть неверным/битым — падаем на дефолтную иконку.
+        if (texture == null && path != DefaultPreviewRsiPath)
+            texture = TryLoadRsiFirstFrame(DefaultPreviewRsiPath);
+
+        PreviewCache[path] = texture;
+        return texture;
+    }
+
+    /// <summary>Первый кадр первого состояния RSI (или null, если ресурс/кадр не найден).</summary>
+    private static Texture? TryLoadRsiFirstFrame(string path)
     {
         var cache = IoCManager.Resolve<IResourceCache>();
 
-        if (!cache.TryGetResource<RSIResource>(PreviewRsiPath, out var rsi))
+        if (!cache.TryGetResource<RSIResource>(path, out var rsi))
             return null;
 
-        if (!rsi.RSI.TryGetState(PreviewStateId, out var state))
-            return null;
+        foreach (var state in rsi.RSI)
+            return state.Frame0;
 
-        return state.Frame0;
+        return null;
     }
 
     /// <summary>
@@ -542,33 +569,49 @@ public sealed class N14MerchantWindow : FancyWindow
             _middle.AddChild(CreateIndicator(false, sellTotal));
     }
 
+    private static void ApplyButtonStyle(Button button)
+    {
+        // Без серой заливки: только янтарный контур.
+        button.StyleBoxOverride = new StyleBoxFlat
+        {
+            BackgroundColor = Color.Transparent,
+            BorderColor = N14MerchantTheme.Accent,
+            BorderThickness = new Thickness(1),
+        };
+    }
+
     private Control CreateIndicator(bool pointRight, int price)
     {
-        var group = new BoxContainer
+        // Стрелка и цифра накладываются друг на друга: цифра — по центру внутри стрелки.
+        var overlay = new LayoutContainer
         {
-            Orientation = LayoutOrientation.Vertical,
             HorizontalAlignment = HAlignment.Center,
             Margin = new Thickness(0, 6, 0, 0),
         };
 
+        var arrow = new N14MerchantArrow(pointRight)
+        {
+            LineColor = N14MerchantTheme.Accent,
+        };
+        LayoutContainer.SetAnchorPreset(arrow, LayoutContainer.LayoutPreset.Wide);
+        overlay.AddChild(arrow);
+
         if (price != 0)
         {
-            group.AddChild(new Label
+            var text = new Label
             {
                 Text = price >= 0 ? $"+{price}" : price.ToString(),
                 FontOverride = N14MerchantTheme.GetFont(14),
                 FontColorOverride = N14MerchantTheme.Accent,
                 HorizontalAlignment = HAlignment.Center,
-            });
+                VerticalAlignment = VAlignment.Center,
+                MouseFilter = Control.MouseFilterMode.Ignore,
+            };
+            LayoutContainer.SetAnchorPreset(text, LayoutContainer.LayoutPreset.Wide);
+            overlay.AddChild(text);
         }
 
-        group.AddChild(new N14MerchantArrow(pointRight)
-        {
-            HorizontalAlignment = HAlignment.Center,
-            Fill = N14MerchantTheme.Accent,
-        });
-
-        return group;
+        return overlay;
     }
 
     public (List<int> Buy, List<string> Sell) GetSelection()

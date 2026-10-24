@@ -69,6 +69,9 @@ public sealed class N14MerchantItemState
 
     /// <summary>Item description shown in the bottom info block.</summary>
     public string Description = string.Empty;
+
+    /// <summary>RSI path for the preview icon (empty = use client default).</summary>
+    public string IconPath = string.Empty;
 }
 
 /// <summary>
